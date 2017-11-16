@@ -19,9 +19,10 @@ stf_urls<-function(pesquisa_livre){
 url_excesso<-stf_urls(pesquisa_livre)
 
 
-base<-url_excesso[1:2] %>% purrr::map(~{
+base<-url_excesso[c(1:100,201:291)] %>%
+  purrr::map_dfr(possibly(~{
 
-principal<- url_excesso[2] %>% 
+principal<-.x %>% 
   httr::GET() %>% 
   httr::content() 
 
@@ -38,7 +39,7 @@ origem<-recurso %>%
   str_trim()
 
 classe<-recurso %>% 
-        map_chr(~str_trim(.x[[6]])
+        map_chr(~str_trim(.x[[6]]))
                 
 relator<-recurso %>% 
          map_chr(~{
@@ -54,125 +55,68 @@ relator_acordao<- recurso %>%
             str_extract("(?<=Min\\.\\s).*")
         })
 
+data_julgamento<-recurso %>% 
+  map_chr(~{
+    .x[[7]] %>% 
+      str_extract("\\d{2}\\/\\d{2}\\/\\d{4}")
+  })
+
 publicacao<-principal %>% 
   xml2::xml_find_all("//p[strong='Publicação']/following-sibling::*[1]") %>% 
-  xml2::xml_text() 
+  xml2::xml_text() %>%
+  str_extract("(?<=PUBLIC\\s|DJ\\s)\\d{2}.\\d{2}.\\d{4}")
+  
 
 partes<-principal %>% 
   xml2::xml_find_all("//p[strong='Parte(s)']/following-sibling::pre") %>% 
   xml2::xml_text() %>% 
   stringr::str_split("\r\n") %>% 
   purrr::modify_depth(1,~{setNames(.,str_extract(.,".*?(?=\\s)"))})
-parte<-bind_rows(!!!partes)
+partes<-bind_rows(!!!partes)
 
 ementa<- principal %>% 
   xml2::xml_find_all("//div[contains(@style,'line-height: 150%;text-align: justify;')]") %>% 
   xml2::xml_text()
 
-decisao<-principal %>% 
-  xml2::xml_find_all("//div[contains(@style,'text-align:justify; color: #385260; font-weight: normal; font-size: 11px')]") %>% 
-  xml2::xml_text()
 
-
-
-
-  
-
-  
-  
-  
-  
-
-  
-  
-  map(t) %>% 
-pa<-partes %>% 
-  do.call(rbind,.)
-
-pa1<-map(pa,t)
-
-pa2<-do.call(rbind,pa1)
-
-ementa<- principal %>% 
-  xml2::xml_find_all("//div[contains(@style,'line-height: 150%;text-align: justify;')]") %>% 
+decisao_tag<-principal %>% 
+  xml2::xml_find_all("//strong[div/@style='line-height: 150%;text-align: justify;']/following-sibling::p[1]") %>% 
   xml2::xml_text()
 
 decisao<-principal %>% 
-  xml2::xml_find_all("//div[contains(@style,'text-align:justify; color: #385260; font-weight: normal; font-size: 11px')]") %>% 
+  xml2::xml_find_all("//strong[div/@style='line-height: 150%;text-align: justify;']/following-sibling::p[1]/../div[1]") %>% 
   xml2::xml_text()
-final<-data.frame()
+
+decisao<-ifelse(decisao_tag=="Decisão",decisao,"inexistente")
+
+voto<-decisao %>% map_chr(~{
+  if
+  (stringr::str_detect(.x,"maioria")){
+  "maioria"
+}else if (stringr::str_detect(.x,"unanime")){
+  "unanime"
+}else
+    NA
 })
 
-b<-base %>% purrr::reduce(rbind)
+url_inteiro_teor<-principal %>% 
+  xml_find_all("//li/a[contains(@href,'obterInteiroTeor')]") %>% 
+  xml_attrs() %>%
+  str_extract("inteiroTeor.*") %>% 
+  str_c("http://www.stf.jus.br/portal/",.)
+
+data.frame(url=.x,processo,origem,classe,relator,relator_acordao,data_julgamento,publicacao,partes,ementa,voto,decisao,url_inteiro_teor)
+},data.frame(url=NA_character_,processo=NA_character_,origem=NA_character_,classe=NA_character_,relator=NA_character_,relator_acordao=NA_character_,data_julgamento=NA_character_,publicacao=NA_character_,partes=NA_character_,ementa=NA_character_,voto=NA_character_,decisao=NA_character_,url_inteiro_teor=NA_character_)
+))
 
 
+stf_inteiro_teor<-function(url,baixar=FALSE){
+  tmp_file<-tempfile(pattern="inteiro",fileext = ".pdf")
+  url %>% 
+    purrr::map_chr(~{
+    .x %>% 
+    httr::GET(url, write_disk(path="inteiro.pdf",overwrite = T))
+     txt<- textreadr::read_document("inteiro.pdf",combine=T)
 
-url_andamento<-principal %>% 
-  xml2::xml_find_all("//p/strong/a/@href") %>% 
-  xml2::xml_text() %>% 
-  str_extract("numero.*") %>% 
-  str_c("http://www.stf.jus.br/portal/processo/verProcessoAndamento.asp?",.)
-
-
-  
-  
-
-
-recurso<-url_andamento[1] %>% 
-  httr::GET() %>% 
-  httr::content() %>% 
-  xml_find_first("//h3/strong") %>% 
-  xml_text()
-
-origem<-url_andamento[1] %>% 
-  httr::GET() %>% 
-  httr::content() %>% 
-  xml_find_first("//tr[contains(td,'Origem:')]//strong") %>% 
-  xml_text()
-
-relator_atual<-url_andamento[1] %>% 
-  httr::GET() %>% 
-  httr::content() %>% 
-  xml_find_first("//tr[contains(td,'Relator atual')]//strong") %>% 
-  xml_text()
-
-requerente<-url_andamento[1] %>% 
-  httr::GET() %>% 
-  httr::content() %>% 
-  xml_find_first("//tr[contains(td,'RECTE.')]//strong") %>% 
-  xml_text()
-
-paciente<-url_andamento[1] %>% 
-  httr::GET() %>% 
-  httr::content() %>% 
-  xml_find_first("//tr[contains(td,'PACTE.')]//strong") %>% 
-  xml_text()
-
-impetrante<-url_andamento[1] %>% 
-  httr::GET() %>% 
-  httr::content() %>% 
-  xml_find_first("//tr[contains(td,'IMPTE.')]//strong") %>% 
-  xml_text()
-
-coator<-url_andamento[1] %>% 
-  httr::GET() %>% 
-  httr::content() %>% 
-  xml_find_first("//tr[contains(td,'COATOR')]//strong") %>% 
-  xml_text()
-
-andamento<-url_andamento[1] %>% 
-  xml2::read_html() %>% 
-  rvest::html_nodes(xpath="//table[@class='resultadoAndamentoProcesso']") %>% 
-  rvest::html_table(header=T,fill=TRUE) %>% 
-  magrittr::extract2(1)
-
-
-inteiro_teor<-url_andamento[1] %>% 
-  httr::GET() %>% 
-  httr::content() %>% 
-  xml_find_first("//td") %>% 
-  xml_text()
-  
-  http://www.stf.jus.br/portal/processo/verProcessoPeca.asp?id=313194342&tipoApp=.pdf
-href="verProcessoPeca.asp?id=313194342&tipoApp=.pdf"
-  
+    })
+} 
