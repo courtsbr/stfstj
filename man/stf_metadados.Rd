@@ -15,10 +15,5 @@ Tabela com metadados
 \description{
 Essa função retorna os metadados da jurisprudência do STF conforme a url extraída com a função stf_urls.R
 }
-\examples{
-Baixar metadados da telefônica.
-enderecos<-url_stf("TELEFONICA+BRASIL")
-stf_metadados(enderecos)
-}
 \keyword{jurisprudência}
 \keyword{stf,}

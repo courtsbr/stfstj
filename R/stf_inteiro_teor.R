@@ -9,9 +9,6 @@
 #' @import magrittr
 #' @import textreadr
 #' @return vetor com urls dos processos agrupados de 10 em 10
-#' @examples
-#' Baixar e ler acórdão do STF
-#' txt<-stf_inteiro_teor("TELEFONICA+BRASIL") 
 
 #' @export
 

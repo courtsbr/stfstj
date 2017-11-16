@@ -15,9 +15,5 @@ vetor com urls dos processos agrupados de 10 em 10
 \description{
 Essa função retorna as urls dos processos baseadas na pesquisa livre da jurisprudência do STF
 }
-\examples{
-Baixar urls dos processos da telefônica
-enderecos<-stf_urls("TELEFONICA+BRASIL") 
-}
 \keyword{jurisprudência}
 \keyword{stf,}

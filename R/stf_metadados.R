@@ -10,10 +10,6 @@
 #' @import purrr
 #' @import dplyr
 #' @return Tabela com metadados
-#' @examples
-#' Baixar metadados da telefônica.
-#' enderecos<-url_stf("TELEFONICA+BRASIL")
-#' stf_metadados(enderecos)
 
 #' @export
 stf_metadados<-function(urls){

@@ -15,10 +15,6 @@ vetor com urls dos processos agrupados de 10 em 10
 \description{
 Essa função baixa e lê os acórdãos do stf conforme url extraída via função stf_metadata
 }
-\examples{
-Baixar e ler acórdão do STF
-txt<-stf_inteiro_teor("TELEFONICA+BRASIL") 
-}
 \keyword{decisão}
 \keyword{inteiro}
 \keyword{jurisprudência,}

@@ -8,9 +8,6 @@
 #' @import stringr
 #' @import magrittr
 #' @return vetor com urls dos processos agrupados de 10 em 10
-#' @examples
-#' Baixar urls dos processos da telefônica
-#' enderecos<-stf_urls("TELEFONICA+BRASIL") 
 
 #' @export
 

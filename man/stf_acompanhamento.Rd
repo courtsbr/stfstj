@@ -15,11 +15,6 @@ tabela com os andamentos processuais
 \description{
 Essa função retorna a tabela com o andamento processual da jurispruência buscada com a função stf_metadados.R
 }
-\examples{
-andamento de um processo da telefônica
-url<- "http://www.stf.jus.br/portal/processo/verProcessoAndamento.asp?numero=897105&classe=ARE-AgR&codigoClasse=0&origem=JUR&recurso=0&tipoJulgamento=M"
-andamento<-stf_acompanhamento(url) 
-}
 \keyword{andamento}
 \keyword{jurisprudência,}
 \keyword{processual}
