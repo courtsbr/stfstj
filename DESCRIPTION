@@ -1,0 +1,21 @@
+Package: stfscraper
+Date: 2017-11-16
+Title: Extração dos dados do STF e do STJ
+Version: 0.1.0
+Author: Associação Brasileira de Jurimetria
+Maintainer: The package maintainer <jjesus@abj.org.br>
+Description: Funções para extrair dados jurisprudenciais dos Tribunais  
+License: License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends:
+  R (>= 2.10),
+  httr,
+  stringr,
+  purrr,
+  dplyr,
+  magrittr,
+  xml2,
+  rvest,
+  textreadr
+RoxygenNote: 6.0.1
