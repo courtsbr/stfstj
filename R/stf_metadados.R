@@ -13,8 +13,8 @@
 
 #' @export
 stf_metadados<-function(urls){
-  purrr::map_dfr(purrr::possibly(~{
-    
+  urls %>% purrr::map_dfr(purrr::possibly(~{
+
     principal<- .x %>% 
       httr::GET() %>% 
       httr::content() 
@@ -56,9 +56,12 @@ stf_metadados<-function(urls){
     
     publicacao<-principal %>% 
       xml2::xml_find_all("//p[strong='Publicação']/following-sibling::*[1]") %>% 
-      xml2::xml_text() %>%
+      xml2::xml_text()
+    
+    data_publicacao<- publicacao %>%
       stringr::str_extract("(?<=PUBLIC\\s|DJ\\s)\\d{2}.\\d{2}.\\d{4}")
     
+    eletronico<-stringr::detect(publicacao,"ELETRÔNICO")
     
     partes<-principal %>% 
       xml2::xml_find_all("//p[strong='Parte(s)']/following-sibling::pre") %>% 
@@ -99,12 +102,14 @@ stf_metadados<-function(urls){
       stringr::str_c("http://www.stf.jus.br/portal/",.)
     
     url_andamento<-principal %>% 
-      xml2::xml_find_all("//p/strong/a/@href") %>%
-      xml2::xml_text() %>%
-      str_extract("numero.*") %>%
-      str_c("http://www.stf.jus.br/portal/processo/verProcessoAndamento.asp?",.)
+      xml2::xml_find_all("//div[@class='abasAcompanhamento']/ul[@class='abas']/li/a[contains(@href,'verProcessoAndamento')]") %>%
+      xml2::xml_attrs() %>%
+      stringr::str_extract("numero.*") %>%
+      stringr::str_c("http://www.stf.jus.br/portal/processo/verProcessoAndamento.asp?",.)
     
-    data.frame(url=.x,processo,origem,classe,relator,relator_acordao,data_julgamento,publicacao,partes,ementa,voto,decisao,url_inteiro_teor,url_andamento,stringsAsFactors = F)
-  },data.frame(url=NA_character_,processo=NA_character_,origem=NA_character_,classe=NA_character_,relator=NA_character_,relator_acordao=NA_character_,data_julgamento=NA_character_,publicacao=NA_character_,partes=NA_character_,ementa=NA_character_,voto=NA_character_,decisao=NA_character_,url_inteiro_teor=NA_character_,url_andamento=NA_character_)
+    
+    
+    data.frame(url=.x,processo,origem,classe,relator,relator_acordao,data_julgamento,data_publicacao,eletronico,partes,ementa,voto,decisao,url_inteiro_teor,url_andamento,stringsAsFactors = F)
+  },data.frame(url=NA_character_,processo=NA_character_,origem=NA_character_,classe=NA_character_,relator=NA_character_,relator_acordao=NA_character_,data_julgamento=NA_character_,data_publicacao=NA_character_,eletronico=NA,partes=NA_character_,ementa=NA_character_,voto=NA_character_,decisao=NA_character_,url_inteiro_teor=NA_character_,url_andamento=NA_character_)
   ))
 }

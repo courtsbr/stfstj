@@ -4,10 +4,12 @@
 \alias{stf_urls}
 \title{Function stf_urls}
 \usage{
-stf_urls(pesquisa_livre)
+stf_urls(pesquisa_livre, decisao = "acordaos")
 }
 \arguments{
 \item{pesquisa_livre}{palavras a serem buscadas}
+
+\item{decisao}{indicar se são acórdãos ou decisões monocráticas}
 }
 \value{
 vetor com urls dos processos agrupados de 10 em 10

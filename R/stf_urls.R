@@ -2,6 +2,7 @@
 #'
 #' Essa função retorna as urls dos processos baseadas na pesquisa livre da jurisprudência do STF
 #' @param pesquisa_livre palavras a serem buscadas
+#' @param decisao indicar se são acórdãos ou decisões monocráticas
 #' @keywords stf, jurisprudência
 #' @import httr
 #' @import xml2
@@ -11,8 +12,15 @@
 
 #' @export
 
-stf_urls<-function(pesquisa_livre){
-  url1<-stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",pesquisa_livre,"&base=baseAcordaos")
+stf_urls<-function(pesquisa_livre, decisao="acordaos"){
+  
+  
+  url1<-if(decisao=="acordaos"){
+    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",pesquisa_livre,"&base=baseAcordaos")
+  }else if(decisao=="monocratica"){
+    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",pesquisa_livre,"&base=baseMonocraticas")
+    }else
+      stop("Você tem de indicar se são acórdãos ou decisões monocráticas")
   numero_tinyurl<-httr::GET(url1) %>% 
     httr::content() %>% 
     xml2::xml_find_all("//*[@class='linkPagina']|//*[@class='linkPagina']/@href") %>%

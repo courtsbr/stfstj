@@ -17,5 +17,6 @@ Depends:
   magrittr,
   xml2,
   rvest,
-  textreadr
+  pdftools,
+  tesseract
 RoxygenNote: 6.0.1
