@@ -7,7 +7,7 @@
 stf_acompanhamento(url)
 }
 \arguments{
-\item{url_acompanhamento}{url dos andamento}
+\item{url}{url dos andamentos}
 }
 \value{
 tabela com os andamentos processuais

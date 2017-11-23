@@ -4,17 +4,9 @@
 #' @param pesquisa_livre palavras a serem buscadas
 #' @param decisao indicar se são acórdãos ou decisões monocráticas
 #' @keywords stf, jurisprudência
-#' @import httr
-#' @import xml2
-#' @import stringr
-#' @import magrittr
 #' @return vetor com urls dos processos agrupados de 10 em 10
-
 #' @export
-
 stf_urls<-function(pesquisa_livre, decisao="acordaos"){
-  
-  
   url1<-if(decisao=="acordaos"){
     stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",pesquisa_livre,"&base=baseAcordaos")
   }else if(decisao=="monocratica"){

@@ -1,16 +1,9 @@
 #' Function stf_metadados
 #'
-#' Essa função retorna os metadados da jurisprudência do STF conforme a url extraída com a função stf_urls.R
+#' Essa função retorna os metadados da jurisprudencia do STF conforme a url extraída com a função stf_urls.R
 #' @param urls endereços eletrônicos dos processos agrupados de 10 em 10
 #' @keywords stf, jurisprudência
-#' @import httr
-#' @import xml2
-#' @import stringr
-#' @import magrittr
-#' @import purrr
-#' @import dplyr
-#' @return Tabela com metadados
-
+#' @return Tabela com metadados dos processos
 #' @export
 stf_metadados<-function(urls){
   urls %>% purrr::map_dfr(purrr::possibly(~{
@@ -61,7 +54,7 @@ stf_metadados<-function(urls){
     data_publicacao<- publicacao %>%
       stringr::str_extract("(?<=PUBLIC\\s|DJ\\s)\\d{2}.\\d{2}.\\d{4}")
     
-    eletronico<-stringr::detect(publicacao,"ELETRÔNICO")
+    eletronico<-stringr::str_detect(publicacao,"ELETRÔNICO")
     
     partes<-principal %>% 
       xml2::xml_find_all("//p[strong='Parte(s)']/following-sibling::pre") %>% 

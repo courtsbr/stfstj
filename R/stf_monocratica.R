@@ -1,16 +1,9 @@
 #' Function stf_monocratica
 #'
 #' Essa função baixa as decisões monocráticas do STF
-#' @param pesquisa_livre 
+#' @param urls  vetor de urls das decisões monocráticas obtidas com a função stf_urls
 #' @keywords stf, jurisprudência, inteiro teor, decisão
-#' @import httr
-#' @import xml2
-#' @import purrr
-#' @import magrittr
-#' @import pdftools
-#' @import tesseract
-#' @return vetor com pdfs em texto
-
+#' @return dataframe com metadados e decisão monocrática
 #' @export
 
 stf_monocratica<-function(urls){

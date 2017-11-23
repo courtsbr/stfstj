@@ -10,7 +10,7 @@ stf_metadados(urls)
 \item{urls}{endereços eletrônicos dos processos agrupados de 10 em 10}
 }
 \value{
-Tabela com metadados
+Tabela com metadados dos processos
 }
 \description{
 Essa função retorna os metadados da jurisprudência do STF conforme a url extraída com a função stf_urls.R

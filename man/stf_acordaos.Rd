@@ -12,7 +12,7 @@ Deve-se informar quais são pdfs são eletrônicos (TRUE) e quais,
 escaneados (FALSE).}
 }
 \value{
-vetor com pdfs em texto
+vetor de textos após conversão dos pdfs
 }
 \description{
 Essa função baixa e lê os acórdãos do stf conforme url extraída via função stf_metadata

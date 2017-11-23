@@ -5,21 +5,14 @@
 #'     Deve-se informar quais são pdfs são eletrônicos (TRUE) e quais,
 #'     escaneados (FALSE).
 #' @keywords stf, jurisprudência, inteiro teor, decisão
-#' @import httr
-#' @import xml2
-#' @import purrr
-#' @import magrittr
-#' @import pdftools
-#' @import tesseract
-#' @return vetor com pdfs em texto
-
+#' @return vetor de textos após conversão dos pdfs
 #' @export
 stf_acordaos<-function(df){
   stopifnot(is.logical(df$eletronico))
-  #base<-data.frame(url,eletronico,stringsAsFactors = F)
+  diretorio<-getwd()
   setwd(tempdir())
   tmp_file<-tempfile(pattern="inteiro",fileext = ".pdf")
-   purrr::map2(df$url,df$eletronico,~{
+   purrr::map2_chr(df$url,df$eletronico,~{
     if(.y==TRUE){
           pdftools::pdf_text(.x) %>% 
         paste(sep="\n",collapse="")
@@ -36,5 +29,8 @@ stf_acordaos<-function(df){
         }
    }
      )
+   on.exit(unlink(tmp_file))
+   on.exit(diretorio)
 }
+
 

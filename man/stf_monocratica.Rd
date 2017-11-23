@@ -7,10 +7,10 @@
 stf_monocratica(urls)
 }
 \arguments{
-\item{pesquisa_livre}{}
+\item{urls}{vetor de urls das decisões monocráticas obtidas com a função stf_urls}
 }
 \value{
-vetor com pdfs em texto
+dataframe com metadados e decisão monocrática
 }
 \description{
 Essa função baixa as decisões monocráticas do STF
