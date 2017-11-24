@@ -12,7 +12,8 @@ stf_acordaos<-function(df){
   diretorio<-getwd()
   setwd(tempdir())
   tmp_file<-tempfile(pattern="inteiro",fileext = ".pdf")
-   purrr::map2_chr(df$url,df$eletronico,~{
+  on.exit(setwd(diretorio),unlink(tmp_file))
+  purrr::map2_chr(df$url,df$eletronico,~{
     if(.y==TRUE){
           pdftools::pdf_text(.x) %>% 
         paste(sep="\n",collapse="")
@@ -29,8 +30,7 @@ stf_acordaos<-function(df){
         }
    }
      )
-   on.exit(unlink(tmp_file))
-   on.exit(diretorio)
+
 }
 
 

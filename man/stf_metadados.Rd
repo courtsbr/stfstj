@@ -13,7 +13,7 @@ stf_metadados(urls)
 Tabela com metadados dos processos
 }
 \description{
-Essa função retorna os metadados da jurisprudência do STF conforme a url extraída com a função stf_urls.R
+Essa função retorna os metadados da jurisprudencia do STF conforme a url extraída com a função stf_urls.R
 }
 \keyword{jurisprudência}
 \keyword{stf,}
