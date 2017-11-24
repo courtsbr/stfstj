@@ -7,6 +7,7 @@ addons:
   - libleptonica-dev
   - tesseract-ocr-eng
   - tesseract-ocr-por
+  - libmagick++-dev
   - libpoppler-cpp-dev
   - libxml2-dev
 
