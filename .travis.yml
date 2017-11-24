@@ -4,10 +4,11 @@ addons:
   apt:
   packages:
   - libtesseract-dev
-- tesseract-ocr-eng
-- tesseract-ocr-por
-- libpoppler-cpp-dev
-- libxml2-dev
+  - libleptonica-dev
+  - tesseract-ocr-eng
+  - tesseract-ocr-por
+  - libpoppler-cpp-dev
+  - libxml2-dev
 
 language: R
 sudo: false
