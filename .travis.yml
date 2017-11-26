@@ -1,5 +1,10 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
+language: R
+sudo: false
+cache: packages
+
+
 # Prevents Travis timeout for building
 
 before_install:
@@ -7,14 +12,12 @@ before_install:
 
 addons:
   apt:
-  packages:
-  - libtesseract-dev
-  - libleptonica-dev
-  - tesseract-ocr-eng
-  - tesseract-ocr-por
-  - libpoppler-cpp-dev
-  - r-cran-xml
+   packages:
+     - libtesseract-dev
+     - libleptonica-dev
+     - tesseract-ocr-eng
+     - tesseract-ocr-por
+     - libpoppler-cpp-dev
+     - libxml2-dev
 
-language: R
-sudo: false
-cache: packages
+
