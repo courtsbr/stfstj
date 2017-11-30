@@ -2,8 +2,8 @@
 
 export(stf_acompanhamento)
 export(stf_acordaos)
-export(stf_metadados)
-export(stf_monocratica)
+export(stf_help_view)
+export(stf_thesaurus)
 export(stf_urls)
 importFrom(dplyr,"%>%")
 importFrom(purrr,"%||%")
