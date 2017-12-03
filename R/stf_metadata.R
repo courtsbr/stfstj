@@ -1,4 +1,4 @@
-#' Function stf_metadata
+#' Function stf_table
 #'
 #' This function returns metadada from Brazilian Supreme Court precedents
 #' @param open_search Words to be searched
@@ -41,7 +41,7 @@ url1<-URLencode(url1)
 }
 
 
-#'@export
+#' @export
 stf_table<-function(...){
   
   urls<-stf_urls(open_search,database)
