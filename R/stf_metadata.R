@@ -8,8 +8,8 @@
 #' @keywords stf, precedents, metadata
 #' @return Dataframe with the metadata
 
-#' @export
-stf_urls<-function(open_search, database="acordaos"){
+
+.stf_urls<-function(open_search, database="acordaos"){
   url1<-if(database=="acordaos"){
     stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=baseAcordaos")
   }else if(database=="monocraticas"){
@@ -41,8 +41,8 @@ url1<-URLencode(url1)
 }
 
 
-
-stf_table<-function(urls){
+#'@export
+stf_table<-function(...){
   stf_urls %>% purrr::map_dfr(purrr::possibly(~{
     
     principal<- .x %>% 
