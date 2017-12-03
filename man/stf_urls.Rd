@@ -2,7 +2,7 @@
 % Please edit documentation in R/stf_metadata.R
 \name{stf_urls}
 \alias{stf_urls}
-\title{Function stf_metadata}
+\title{Function stf_table}
 \usage{
 stf_urls(open_search, database = "acordaos")
 }
