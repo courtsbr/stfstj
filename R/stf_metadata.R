@@ -43,7 +43,10 @@ url1<-URLencode(url1)
 
 #'@export
 stf_table<-function(...){
-  stf_urls %>% purrr::map_dfr(purrr::possibly(~{
+  
+  urls<-stf_urls(open_search,database)
+  
+  urls %>% purrr::map_dfr(purrr::possibly(~{
     
     principal<- .x %>% 
       httr::GET() %>% 
