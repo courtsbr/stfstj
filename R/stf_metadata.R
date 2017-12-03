@@ -1,29 +1,18 @@
-#' Function stf_table
-#'
-#' This function returns metadada from Brazilian Supreme Court precedents
-#' @param open_search Words to be searched
-#' @param database Character string with one of these seven options:"acordaos","sumulas","monocraticas","presidencia",
-#'    "sumulas_vinculantes","repercussao_geral","questoes_ordem".
-#'    Default is "acordaos".
-#' @keywords stf, precedents, metadata
-#' @return Dataframe with the metadata
-
-
-stf_urls<-function(open_search, database="acordaos"){
-  url1<-if(database=="acordaos"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=baseAcordaos")
-  }else if(database=="monocraticas"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=baseMonocraticas")
-  }else if(database=="sumulas"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=baseSumulas")
-  }else if(database=="presidencia"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=basePresidencia")
-  }else if(database=="repercussao_geral"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=baseRepercussao")
-  } else if(database=="sumulas_vinculantes"){
-      stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=baseSumulasVinculantes")
-  } else if(database=="questoes_ordem"){
-      stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=baseQuestoes")
+stf_urls<-function(x,y){
+  url1<-if(y=="acordaos"){
+    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseAcordaos")
+  }else if(y=="monocraticas"){
+    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseMonocraticas")
+  }else if(y=="sumulas"){
+    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseSumulas")
+  }else if(y=="presidencia"){
+    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=basePresidencia")
+  }else if(y=="repercussao_geral"){
+    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseRepercussao")
+  } else if(y=="sumulas_vinculantes"){
+      stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseSumulasVinculantes")
+  } else if(y=="questoes_ordem"){
+      stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseQuestoes")
   }else
     stop("You have to write one of the seven available options")
 url1<-URLencode(url1)
@@ -37,14 +26,23 @@ url1<-URLencode(url1)
     ceiling()
   tinyURL<-numero_tinyurl[[2]]
   urls<-stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/",tinyURL,"&pagina=",1:paginas)
-  return(urls)
 }
 
 
+#' Function stf_metadata
+#'
+#' This function returns metadada from Brazilian Supreme Court precedents
+#' @param open_search Words to be searched
+#' @param database Character string with one of these seven options:
+#'    "acordaos","sumulas","monocraticas","presidencia",
+#'    "sumulas_vinculantes","repercussao_geral","questoes_ordem".
+#'    Default is "acordaos".
+#' @keywords stf, precedents, metadata
+#' @return Dataframe with the metadata
 #' @export
-stf_table<-function(...){
+stf_metadata<-function(open_search,database="acordaos"){
   
-  urls<-stf_urls(open_search,database)
+  urls<-stf_urls(x=open_search,y=database)
   
   urls %>% purrr::map_dfr(purrr::possibly(~{
     
