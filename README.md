@@ -16,9 +16,9 @@ You can install stfstj from github with:
 devtools::install_github("jjesusfilho/stfstj")
 ```
 
-You also have to make sure the packages [tesseract](https://github.com/ropensci/tesseract) and [pdftools](https://github.com/ropensci/pdftools) are installed also their dependencies.
+You also have to make sure the packages [tesseract](https://github.com/ropensci/tesseract) and [pdftools](https://github.com/ropensci/pdftools) are installed as well as their dependencies.
 
-You also have to download the `tesseract` trained data for portuguese. You can find directions for Linux, Mac-OS and Windows, [here](https://github.com/tesseract-ocr/tesseract/wiki)
+You also have to download the `tesseract` trained data for Portuguese. You can find directions for Linux, Mac-OS and Windows, [here](https://github.com/tesseract-ocr/tesseract/wiki)
 
 Usage
 -----
