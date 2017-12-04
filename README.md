@@ -68,5 +68,6 @@ stf_help_view()
 Once you have imported the metadata, you can you the same data frame to import the whole decision. It is important to be aware that decisions before 2011 and even some of that year are in pdf image not text. Those decisions are converted to `png` and submmited to OCR in order to be read. The limitation is that it might take a long time to read all decisions.
 
 ``` r
-decisionTelefonica<-stf_acordaos(telefonicaDF[1,]). ## It downloads just the first decision from the dataset imported above.
+decisionTelefonica<-stf_acordaos(telefonicaDF[1,]). 
+# Downloads just the first decision from the dataset imported above.
 ```

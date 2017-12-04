@@ -81,7 +81,8 @@ Once you have imported the metadata, you can you the same data frame to import t
 The limitation is that it might take a long time to read all decisions.
 
 ```{r example7,eval=FALSE}
-decisionTelefonica<-stf_acordaos(telefonicaDF[1,]). ## It downloads just the first decision from the dataset imported above.
+decisionTelefonica<-stf_acordaos(telefonicaDF[1,]). 
+# Downloads just the first decision from the dataset imported above.
 ```
 
 
