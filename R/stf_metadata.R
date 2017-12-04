@@ -44,7 +44,7 @@ stf_metadata<-function(open_search,database="acordaos"){
   
   urls<-stf_urls(x=open_search,y=database)
   
-  df<-urls[1] %>% purrr::map_dfr(purrr::possibly(~{
+  df<-urls %>% purrr::map_dfr(purrr::possibly(~{
     
     principal<- .x %>% 
       httr::GET() %>% 
