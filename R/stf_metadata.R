@@ -44,7 +44,7 @@ stf_metadata<-function(open_search,database="acordaos"){
   
   urls<-stf_urls(x=open_search,y=database)
   
-  urls %>% purrr::map_dfr(purrr::possibly(~{
+  df<-urls[1] %>% purrr::map_dfr(purrr::possibly(~{
     
     principal<- .x %>% 
       httr::GET() %>% 
@@ -87,7 +87,7 @@ stf_metadata<-function(open_search,database="acordaos"){
         })
     }
     
-    if(database=="Acordaos"){
+    if(database=="acordaos"){
     relator_acordao<- recurso %>% 
       purrr::map_chr(~{
         .x[[7]] %>% 
@@ -130,7 +130,7 @@ stf_metadata<-function(open_search,database="acordaos"){
     
     if(database=="acordaos"){
     eletronico<-publicacao %>% 
-      stringr::str_detect(regex("ELETR\u00D4NICO",ignore_case=TRUE))
+      stringr::str_detect(stringr::regex("ELETR\u00D4NICO",ignore_case=TRUE))
     }
     partes<-principal %>% 
       xml2::xml_find_all("//p[strong[contains(.,'Parte')]]/following-sibling::pre[1]") %>% 
@@ -184,6 +184,7 @@ stf_metadata<-function(open_search,database="acordaos"){
       xml2::xml_text()
     
     
+    
     decisao<-principal %>% 
       xml2::xml_find_all("//strong[div/@style='line-height: 150%;text-align: justify;']/following-sibling::p[1]/../div[1]") %>% 
       xml2::xml_text()
@@ -201,11 +202,11 @@ stf_metadata<-function(open_search,database="acordaos"){
     if(database=="acordaos"){
     voto<-decisao %>% purrr::map_chr(~{
       if
-      (stringr::str_detect(.x,regex("maioria",ignore_case=TRUE))){
+      (stringr::str_detect(.x,stringr::regex("maioria",ignore_case=TRUE))){
         "maioria"
-      }else if (stringr::str_detect(.x,regex("un(a|\u00E2)nim.*",ignore_case=TRUE))){
+      }else if (stringr::str_detect(.x,stringr::regex("un(a|\u00E2)nim.*",ignore_case=TRUE))){
         "un\u00E2nime"
-      }else if (stringr::str_detect(.x,regex("empate",ignore_case=TRUE))){
+      }else if (stringr::str_detect(.x,stringr::regex("empate",ignore_case=TRUE))){
         "empate"
       }else
         NA

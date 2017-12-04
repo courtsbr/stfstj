@@ -29,10 +29,34 @@ You can install stfstj from github with:
 devtools::install_github("jjesusfilho/stfstj")
 ```
 
-## Example
+You also have to make sure the packages [tesseract](https://github.com/ropensci/tesseract) and [pdftools](https://github.com/ropensci/pdftools) are installed also their dependencies.
 
-This is a basic example which shows you how to solve a common problem:
+## Usage
 
-```{r example}
-## basic example code
+Suppose you want to download the metadata lawsuits precedentes (acordãos) with the expression "excesso de prazo". You can run this function:
+
+```{r example1,eval=FALSE}
+df<-stf_metadata(open_search="excesso de prazo",database="acordaos")
 ```
+
+Or simply:
+
+```{r example2,eval=FALSE}
+df<-stf_metadata("excesso adj2 prazo")
+```
+
+Using "adj2" you are telling the engine that "prazo" is one word apart from "excesso". You don't have to include "acordaos" in the argument `database` because this is the default.
+
+I you want to search for monocratic decisions, you specify it in the `database` argument:
+
+```{r example3,eval=FALSE}
+df<-stf_metadata("excesso adj2 prazo",database="monocraticas")
+```
+
+In order to find all the options, use the help function:
+
+```{r example4,eval=FALSE}
+?stf_metadata()
+```
+
+
