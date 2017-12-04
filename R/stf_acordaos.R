@@ -1,11 +1,12 @@
 #' Function stf_acordaos
 #'
-#' Essa função baixa e lê os acórdãos do stf conforme url extraída via função stf_metadata
-#' @param df dataframe com duas colunas, uma com o vetor de urls dos pdfs e outra com  vetor lógico chamado eletronico. 
-#'     Deve-se informar quais são pdfs são eletrônicos (TRUE) e quais,
-#'     escaneados (FALSE).
-#' @keywords stf, jurisprudência, inteiro teor, decisão
-#' @return vetor de textos após conversão dos pdfs
+#' This functions reads the pdfs with the whole decisions according with the metadata
+#'     obtained by the stf_metadata function.
+#' @param df data frame with at least two columns, one with the url,
+#'    and the other, named electronic, with a logical vector informing wether the pdf is text(TRUE)
+#'    or image(FALSE).
+#' @keywords stf, precedents, inteiro teor, decision
+#' @return vector with the whole content of the decisions.
 #' @export
 stf_acordaos<-function(df){
   stopifnot(is.logical(df$eletronico))
@@ -13,7 +14,7 @@ stf_acordaos<-function(df){
   setwd(tempdir())
   tmp_file<-tempfile(pattern="inteiro",fileext = ".pdf")
   on.exit(setwd(diretorio),unlink(tmp_file))
-  purrr::map2_chr(df$url,df$eletronico,~{
+  purrr::map2_chr(df$url_inteiro_teor,df$eletronico,~{
     if(.y==TRUE){
           pdftools::pdf_text(.x) %>% 
         paste(sep="\n",collapse="")
