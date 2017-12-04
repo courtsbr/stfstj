@@ -1,29 +1,18 @@
-#' Function stf_metadata
-#'
-#' This function returns metadada from Brazilian Supreme Court precedents
-#' @param open_search Words to be searched
-#' @param database Character string with one of these seven options:"acordaos","sumulas","monocraticas","presidencia",
-#'    "sumulas_vinculantes","repercussao_geral","questoes_ordem".
-#'    Default is "acordaos".
-#' @keywords stf, precedents, metadata
-#' @return Dataframe with the metadata
-
-#' @export
-stf_urls<-function(open_search, database="acordaos"){
-  url1<-if(database=="acordaos"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=baseAcordaos")
-  }else if(database=="monocraticas"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=baseMonocraticas")
-  }else if(database=="sumulas"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=baseSumulas")
-  }else if(database=="presidencia"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=basePresidencia")
-  }else if(database=="repercussao_geral"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=baseRepercussao")
-  } else if(database=="sumulas_vinculantes"){
-      stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=baseSumulasVinculantes")
-  } else if(database=="questoes_ordem"){
-      stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",open_search,"&base=baseQuestoes")
+stf_urls<-function(x,y){
+  url1<-if(y=="acordaos"){
+    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseAcordaos")
+  }else if(y=="monocraticas"){
+    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseMonocraticas")
+  }else if(y=="sumulas"){
+    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseSumulas")
+  }else if(y=="presidencia"){
+    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=basePresidencia")
+  }else if(y=="repercussao_geral"){
+    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseRepercussao")
+  } else if(y=="sumulas_vinculantes"){
+      stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseSumulasVinculantes")
+  } else if(y=="questoes_ordem"){
+      stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseQuestoes")
   }else
     stop("You have to write one of the seven available options")
 url1<-URLencode(url1)
@@ -37,13 +26,25 @@ url1<-URLencode(url1)
     ceiling()
   tinyURL<-numero_tinyurl[[2]]
   urls<-stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/",tinyURL,"&pagina=",1:paginas)
-  return(urls)
 }
 
 
-
-stf_table<-function(urls){
-  stf_urls %>% purrr::map_dfr(purrr::possibly(~{
+#' Function stf_metadata
+#'
+#' This function returns metadada from Brazilian Supreme Court precedents
+#' @param open_search Words to be searched
+#' @param database Character string with one of these seven options:
+#'    "acordaos","sumulas","monocraticas","presidencia",
+#'    "sumulas_vinculantes","repercussao_geral","questoes_ordem".
+#'    Default is "acordaos".
+#' @keywords stf, precedents, metadata
+#' @return Dataframe with the metadata
+#' @export
+stf_metadata<-function(open_search,database="acordaos"){
+  
+  urls<-stf_urls(x=open_search,y=database)
+  
+  df<-urls %>% purrr::map_dfr(purrr::possibly(~{
     
     principal<- .x %>% 
       httr::GET() %>% 
@@ -86,7 +87,7 @@ stf_table<-function(urls){
         })
     }
     
-    if(database=="Acordaos"){
+    if(database=="acordaos"){
     relator_acordao<- recurso %>% 
       purrr::map_chr(~{
         .x[[7]] %>% 
@@ -129,7 +130,7 @@ stf_table<-function(urls){
     
     if(database=="acordaos"){
     eletronico<-publicacao %>% 
-      stringr::str_detect(regex("ELETR\u00D4NICO",ignore_case=TRUE))
+      stringr::str_detect(stringr::regex("ELETR\u00D4NICO",ignore_case=TRUE))
     }
     partes<-principal %>% 
       xml2::xml_find_all("//p[strong[contains(.,'Parte')]]/following-sibling::pre[1]") %>% 
@@ -183,6 +184,7 @@ stf_table<-function(urls){
       xml2::xml_text()
     
     
+    
     decisao<-principal %>% 
       xml2::xml_find_all("//strong[div/@style='line-height: 150%;text-align: justify;']/following-sibling::p[1]/../div[1]") %>% 
       xml2::xml_text()
@@ -200,11 +202,11 @@ stf_table<-function(urls){
     if(database=="acordaos"){
     voto<-decisao %>% purrr::map_chr(~{
       if
-      (stringr::str_detect(.x,regex("maioria",ignore_case=TRUE))){
+      (stringr::str_detect(.x,stringr::regex("maioria",ignore_case=TRUE))){
         "maioria"
-      }else if (stringr::str_detect(.x,regex("un(a|\u00E2)nim.*",ignore_case=TRUE))){
+      }else if (stringr::str_detect(.x,stringr::regex("un(a|\u00E2)nim.*",ignore_case=TRUE))){
         "un\u00E2nime"
-      }else if (stringr::str_detect(.x,regex("empate",ignore_case=TRUE))){
+      }else if (stringr::str_detect(.x,stringr::regex("empate",ignore_case=TRUE))){
         "empate"
       }else
         NA

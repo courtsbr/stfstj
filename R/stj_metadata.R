@@ -12,7 +12,7 @@ stj_metadata<-function(open_search,database="ACOR"){
 
 if(phrase==TRUE){open_search<-deparse(open_search)}
 
-open_search<-URLencode(open_search)
+open_search<-utils::URLencode(open_search)
 
 url1<-"http://www.stj.jus.br/SCON/"
 url2<-"http://www.stj.jus.br/SCON/pesquisar.jsp"
@@ -70,7 +70,7 @@ pages_acor<-content_res %>%
   xml2::xml_text() %>% 
   stringr::str_extract("\\d+") %>% 
   as.numeric() %>% 
-  divide_by(10) %>% 
+  magrittr::divide_by(10) %>% 
   ceiling()
 
 
