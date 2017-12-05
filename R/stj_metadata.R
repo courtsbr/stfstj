@@ -8,8 +8,16 @@
 #' @keywords stj, precedents, metadata
 #' @return Dataframe with the metadata
 
-stj_metadata<-function(open_search,database="ACOR"){
+stj_metadata<-function(open_search,database="acordaos"){
 
+  database<-switch(database,
+       acordaos="ACOR",
+       sumulas="SUMU",
+       monocraticas="DTXT",
+       informatico="INFJ"
+)
+  
+  
 if(phrase==TRUE){open_search<-deparse(open_search)}
 
 open_search<-utils::URLencode(open_search)

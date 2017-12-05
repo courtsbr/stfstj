@@ -7,18 +7,19 @@
 stf_acordaos(df)
 }
 \arguments{
-\item{df}{dataframe com duas colunas, uma com o vetor de urls dos pdfs e outra com  vetor lógico chamado eletronico. 
-Deve-se informar quais são pdfs são eletrônicos (TRUE) e quais,
-escaneados (FALSE).}
+\item{df}{data frame with at least two columns, one with the url,
+and the other, named electronic, with a logical vector informing wether the pdf is text(TRUE)
+or image(FALSE).}
 }
 \value{
-vetor de textos após conversão dos pdfs
+vector with the whole content of the decisions.
 }
 \description{
-Essa função baixa e lê os acórdãos do stf conforme url extraída via função stf_metadata
+This functions reads the pdfs with the whole decisions according with the metadata
+    obtained by the stf_metadata function.
 }
-\keyword{decisão}
+\keyword{decision}
 \keyword{inteiro}
-\keyword{jurisprudência,}
+\keyword{precedents,}
 \keyword{stf,}
 \keyword{teor,}

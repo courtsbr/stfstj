@@ -4,7 +4,7 @@
 \alias{stj_metadata}
 \title{Function stj_metadata}
 \usage{
-stj_metadata(open_search, database = "ACOR")
+stj_metadata(open_search, database = "acordaos")
 }
 \arguments{
 \item{open_search}{Words to be searched}
