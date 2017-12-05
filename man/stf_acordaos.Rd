@@ -8,14 +8,14 @@ stf_acordaos(df)
 }
 \arguments{
 \item{df}{data frame with at least two columns, one with the url,
-and the other, named electronic, with a logical vector informing wether the pdf is text(TRUE)
-or image(FALSE).}
+and the other, named electronic, with a logical vector informing whether the pdf is 
+a text(TRUE) or an image(FALSE).}
 }
 \value{
 vector with the whole content of the decisions.
 }
 \description{
-This functions reads the pdfs with the whole decisions according with the metadata
+This function reads the pdfs with the whole decisions according to the metadata
     obtained by the stf_metadata function.
 }
 \keyword{decision}
