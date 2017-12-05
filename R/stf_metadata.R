@@ -1,21 +1,19 @@
-stf_urls<-function(x,y){
-  url1<-if(y=="acordaos"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseAcordaos")
-  }else if(y=="monocraticas"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseMonocraticas")
-  }else if(y=="sumulas"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseSumulas")
-  }else if(y=="presidencia"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=basePresidencia")
-  }else if(y=="repercussao_geral"){
-    stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseRepercussao")
-  } else if(y=="sumulas_vinculantes"){
-      stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseSumulasVinculantes")
-  } else if(y=="questoes_ordem"){
-      stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseQuestoes")
-  }else
-    stop("You have to write one of the seven available options")
-url1<-URLencode(url1)
+stf_url<-function(x,y){
+  
+  y<-switch(y,
+              acordaos="&base=baseAcordaos",
+              monocraticas="&base=baseMonocraticas",
+              sumulas="&base=baseSumulas",
+              informatico="&base=basePresidencia",
+              repercussao_geral="&base=baseRepercussao",
+              sumulas_vinculantes="&base=baseSumulasVinculantes",
+              questoes_ordem="&base=baseQuestoes"
+              
+                  
+  )
+
+  url1<-stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,y)
+  url1<-URLencode(url1)
   numero_tinyurl<-httr::GET(url1) %>% 
     httr::content() %>% 
     xml2::xml_find_all("//*[@class='linkPagina']|//*[@class='linkPagina']/@href") %>%
@@ -29,6 +27,45 @@ url1<-URLencode(url1)
 }
 
 
+stf_urls<-purrr::possibly(stf_url,"ignore")
+
+
+stf_parts_names<-function(z){
+  parts_names %>% 
+    purrr::map_chr(~{
+      .x %>% 
+        stringr::str_replace(stringr::regex("(adv|dpu).*\\s*",ignore_case = T),"Advogado") %>% 
+        stringr::str_replace(stringr::regex("AG.*E.*\\s*",ignore_case = T),"Agravante") %>% 
+        stringr::str_replace(stringr::regex("AG.*(o|a).*\\s*",ignore_case = T),"Agravado") %>% 
+        stringr::str_replace(stringr::regex(".*(COATOR|coatro|autoridade).*\\s*",ignore_case = T),"Coator") %>% 
+        stringr::str_replace(stringr::regex("emb.*(o|a).*\\s*",ignore_case = T),"Embargado") %>% 
+        stringr::str_replace(stringr::regex("emb.*e.*\\s*",ignore_case = T),"Embargante") %>% 
+        stringr::str_replace(stringr::regex("EXT.*\\s*",ignore_case = T),"Extraditando") %>% 
+        stringr::str_replace(stringr::regex("imp.*d.*\\s*",ignore_case = T),"Impetrado") %>% 
+        stringr::str_replace(stringr::regex("imp.*t.*\\s*|IMPRE\\s*",ignore_case = T),"Impetrante") %>% 
+        stringr::str_replace(stringr::regex("^p(a|c|e|t).*\\s*",ignore_case = T),"Paciente") %>% 
+        stringr::str_replace(stringr::regex(".*rec.*e.*\\s*",ignore_case = T),"Recorrente") %>% 
+        stringr::str_replace(stringr::regex(".*rec.*(o|a).*\\s*",ignore_case = T),"Recorrido") %>% 
+        stringr::str_replace(stringr::regex(".*req.*e.*\\s*",ignore_case = T),"Requerente") %>% 
+        stringr::str_replace(stringr::regex(".*req.*(o|a).*\\s*",ignore_case = T),"Requerido") %>%
+        stringr::str_replace(stringr::regex("^proc.*\\s*",ignore_case = T),"Procurador") %>% 
+        stringr::str_replace(stringr::regex("^sus.*e.*\\s*",ignore_case = T),"Suscitante") %>% 
+        stringr::str_replace(stringr::regex("^sus.*(o|a).*\\s*",ignore_case = T),"Suscitado") %>% 
+        stringr::str_replace(stringr::regex(".*curiae.*\\s*",ignore_case = T),"Amicus_curiae") %>% 
+        stringr::str_replace(stringr::regex("rc.*e.*\\s*",ignore_case = T),"Reclamante") %>% 
+        stringr::str_replace(stringr::regex("rc.*(o|a).*\\s*",ignore_case = T),"Reclamado") %>% 
+        stringr::str_replace(stringr::regex("intd(o|a).*\\s*",ignore_case = T),"Interessado") %>% 
+        stringr::str_replace(stringr::regex("r\u00E9u*.*\\s*",ignore_case = T),"R\u00E9u") %>% 
+        stringr::str_replace(stringr::regex("autor.*",ignore_case = T),"Autor") %>% 
+        stringr::str_replace(stringr::regex("litis.*pass.*",ignore_case = T),"Listisconsorte_passivo") %>% 
+        stringr::str_replace(stringr::regex("litis.*at.*",ignore_case = T),"Listisconsorte_ativo") %>% 
+        stringr::str_replace(stringr::regex("DND(oa).*",ignore_case = T),"Denunciado") %>% 
+        stringr::str_replace(stringr::regex("inves(oa).*",ignore_case = T),"Investigado")
+      
+    })
+}
+
+
 #' Function stf_metadata
 #'
 #' This function returns metadada from Brazilian Supreme Court precedents
@@ -37,14 +74,18 @@ url1<-URLencode(url1)
 #'    "acordaos","sumulas","monocraticas","presidencia",
 #'    "sumulas_vinculantes","repercussao_geral","questoes_ordem".
 #'    Default is "acordaos".
+#' @param parts_names Logical. If TRUE (default), it will attempt to fix 
+#'    parts prefixes.
 #' @keywords stf, precedents, metadata
 #' @return Dataframe with the metadata
 #' @export
-stf_metadata<-function(open_search,database="acordaos"){
+stf_metadata<-function(open_search,database="acordaos",parts_names=TRUE){
   
   urls<-stf_urls(x=open_search,y=database)
   
-  df<-urls %>% purrr::map_dfr(purrr::possibly(~{
+  assertthat::assert_that(urls[1]!="ignore",msg="No file was found in the chosen database")
+  
+  urls %>% purrr::map_dfr(purrr::possibly(~{
     
     principal<- .x %>% 
       httr::GET() %>% 
@@ -132,37 +173,16 @@ stf_metadata<-function(open_search,database="acordaos"){
     eletronico<-publicacao %>% 
       stringr::str_detect(stringr::regex("ELETR\u00D4NICO",ignore_case=TRUE))
     }
+    
     partes<-principal %>% 
       xml2::xml_find_all("//p[strong[contains(.,'Parte')]]/following-sibling::pre[1]") %>% 
       xml2::xml_text() %>% 
       stringr::str_extract_all("\\w.*\\:.*(\r\n)*\\w*?") %>% 
+      
       purrr::modify_depth(1,~{
         .x %>% 
-          stringr::str_replace(stringr::regex("(adv|dpu).*\\s*(?=\\:)",ignore_case = T),"Advogado") %>% 
-          stringr::str_replace(stringr::regex("AG.*E.*\\s*(?=\\:)",ignore_case = T),"Agravante") %>% 
-          stringr::str_replace(stringr::regex("AG.*(o|a).*\\s*(?=\\:)",ignore_case = T),"Agravado") %>% 
-          stringr::str_replace(stringr::regex(".*(COATOR|coatro|autoridade).*\\s*(?=\\:)",ignore_case = T),"Coator") %>% 
-          stringr::str_replace(stringr::regex("emb.*(o|a).*\\s*(?=\\:)",ignore_case = T),"Embargado") %>% 
-          stringr::str_replace(stringr::regex("emb.*e.*\\s*(?=\\:)",ignore_case = T),"Embargante") %>% 
-          stringr::str_replace(stringr::regex("EXT.*\\s*(?=\\:)",ignore_case = T),"Extraditando") %>% 
-          stringr::str_replace(stringr::regex("imp.*d.*\\s*(?=\\:)",ignore_case = T),"Impetrado") %>% 
-          stringr::str_replace(stringr::regex("imp.*t.*\\s*(?=\\:)|IMPRE\\s*(?=\\:)",ignore_case = T),"Impetrante") %>% 
-          stringr::str_replace(stringr::regex("^p(a|c|e|t).*\\s*(?=\\:)",ignore_case = T),"Paciente") %>% 
-          stringr::str_replace(stringr::regex("rec.*e.*\\s*(?=\\:)",ignore_case = T),"Recorrente") %>% 
-          stringr::str_replace(stringr::regex("rec.*(o|a).*\\s*(?=\\:)",ignore_case = T),"Recorrido") %>% 
-          stringr::str_replace(stringr::regex("req.*e.*\\s*(?=\\:)",ignore_case = T),"Requerente") %>% 
-          stringr::str_replace(stringr::regex("req.*(o|a).*\\s*(?=\\:)",ignore_case = T),"Requerido") %>%
-          stringr::str_replace(stringr::regex("^proc.*\\s*(?=\\:)",ignore_case = T),"Procurador") %>% 
-          stringr::str_replace(stringr::regex("^sus.*e.*\\s*(?=\\:)",ignore_case = T),"Suscitante") %>% 
-          stringr::str_replace(stringr::regex("^sus.*(o|a).*\\s*(?=\\:)",ignore_case = T),"Suscitado") %>% 
-          stringr::str_replace(stringr::regex("curiae.*\\s*(?=\\:)",ignore_case = T),"Amicus_curiae") %>% 
-          stringr::str_replace(stringr::regex("rc.*e.*\\s*(?=\\:)",ignore_case = T),"Reclamante") %>% 
-          stringr::str_replace(stringr::regex("rc.*(o|a).*\\s*(?=\\:)",ignore_case = T),"Reclamado") %>% 
-          stringr::str_replace(stringr::regex("rc.*(o|a).*\\s*(?=\\:)",ignore_case = T),"Reclamado") %>% 
-          stringr::str_replace(stringr::regex("intd(o|a).*\\s*(?=\\:)",ignore_case = T),"Reclamado") %>% 
-          stringr::str_replace(stringr::regex("^r\u00E9u*.*\\s*(?=\\:)",ignore_case = T),"^r\u00E9u") %>% 
-          
-          setNames(stringr::str_extract(.,".*(?=\\:)"))})
+          setNames(stringr::str_extract(.,".*(?=\\:)"))
+        })
     
     partes<-dplyr::bind_rows(!!!partes)
     
@@ -170,6 +190,10 @@ stf_metadata<-function(open_search,database="acordaos"){
       purrr::map_dfr(~stringr::str_replace(.x,".*?(\\:\\s)","")) 
     partes<-partes %>% 
       dplyr::select(-dplyr::matches(stringr::regex("rela|red.*",ignore_case=TRUE))) 
+    
+    if(parts_names==TRUE){
+    names(partes)<-stf_parts_names(z=names(partes))
+    } 
     
     if(database=="acordaos"){
     ementa<- principal %>% 
@@ -182,8 +206,7 @@ stf_metadata<-function(open_search,database="acordaos"){
     decisao_tag<-principal %>% 
       xml2::xml_find_all("//strong[div/@style='line-height: 150%;text-align: justify;']/following-sibling::p[1]") %>% 
       xml2::xml_text()
-    
-    
+   
     
     decisao<-principal %>% 
       xml2::xml_find_all("//strong[div/@style='line-height: 150%;text-align: justify;']/following-sibling::p[1]/../div[1]") %>% 
@@ -234,7 +257,8 @@ stf_metadata<-function(open_search,database="acordaos"){
     }else{
       data.frame(processo,origem,classe,relator,data_julgamento,data_publicacao,decisao,url_andamento,partes,stringsAsFactors = FALSE)
   }
-  },data.frame(processo=NA_character_,origem=NA_character_,classe=NA_character_,relator=NA_character_,relator_acordao=NA_character_,data_julgamento=NA_character_,data_publicacao=NA_character_,orgao_julgador=NA_character_,eletronico=NA,ementa=NA_character_,voto=NA_character_,decisao=NA_character_,url_inteiro_teor=NA_character_,url_andamento=NA_character_,partes=NA_character_)
+  },data.frame(processo=NA_character_,origem=NA_character_,classe=NA_character_,relator=NA_character_,relator_acordao=NA_character_,data_julgamento=NA_character_,data_publicacao=NA_character_,orgao_julgador=NA_character_,eletronico=NA,ementa=NA_character_,voto=NA_character_,decisao=NA_character_,url_inteiro_teor=NA_character_,url_andamento=NA_character_,partes=NA_character_),
+  quiet = FALSE
   ))
 }
 

@@ -4,7 +4,7 @@
 stfstj
 ======
 
-The goal of stfstj is to download data from the Brazilian Supreme Court (STF) and Superior Court of Justice (STJ) decisions.
+The goal of package stfstj is to download data from the Brazilian Supreme Court (STF) and Superior Court of Justice (STJ) decisions.
 
 Installation
 ------------

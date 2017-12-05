@@ -4,7 +4,7 @@
 \alias{stf_metadata}
 \title{Function stf_metadata}
 \usage{
-stf_metadata(open_search, database = "acordaos")
+stf_metadata(open_search, database = "acordaos", parts_names = TRUE)
 }
 \arguments{
 \item{open_search}{Words to be searched}
@@ -13,6 +13,9 @@ stf_metadata(open_search, database = "acordaos")
 "acordaos","sumulas","monocraticas","presidencia",
 "sumulas_vinculantes","repercussao_geral","questoes_ordem".
 Default is "acordaos".}
+
+\item{parts_names}{Logical. If TRUE (default), it will attempt to fix 
+parts prefixes.}
 }
 \value{
 Dataframe with the metadata
