@@ -29,7 +29,7 @@ stf_acordaos<-function(df){
     }
   },NA_character_,quiet=FALSE))
   
-  file %>% map_chr(~str_c(.x,sep="\n",collapse=""))
+  file %>% purrr::map_chr(~str_c(.x,sep="\n",collapse=""))
 }
 
 
