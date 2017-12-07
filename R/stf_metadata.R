@@ -1,17 +1,17 @@
 stf_url<-function(x,y){
   
   y<-switch(y,
-              acordaos="&base=baseAcordaos",
-              monocraticas="&base=baseMonocraticas",
-              sumulas="&base=baseSumulas",
-              informatico="&base=basePresidencia",
-              repercussao_geral="&base=baseRepercussao",
-              sumulas_vinculantes="&base=baseSumulasVinculantes",
-              questoes_ordem="&base=baseQuestoes"
-              
-                  
+            acordaos="&base=baseAcordaos",
+            monocraticas="&base=baseMonocraticas",
+            sumulas="&base=baseSumulas",
+            informatico="&base=basePresidencia",
+            repercussao_geral="&base=baseRepercussao",
+            sumulas_vinculantes="&base=baseSumulasVinculantes",
+            questoes_ordem="&base=baseQuestoes"
+            
+            
   )
-
+  
   url1<-stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,y)
   url1<-URLencode(url1)
   numero_tinyurl<-httr::GET(url1) %>% 
@@ -23,7 +23,7 @@ stf_url<-function(x,y){
     magrittr::divide_by(10) %>% 
     ceiling()
   tinyURL<-numero_tinyurl[[2]]
-  urls<-stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/",tinyURL,"&pagina=",1:paginas)
+  urls <- stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/",tinyURL,"&pagina=",1:paginas)
 }
 
 
@@ -104,13 +104,13 @@ stf_metadata<-function(open_search,database="acordaos",parts_names=TRUE){
       stringr::str_trim()
     
     if(database=="acordaos"){
-    classe<-recurso %>% 
-      purrr::map_chr(~stringr::str_trim(.x[[6]]))
+      classe<-recurso %>% 
+        purrr::map_chr(~stringr::str_trim(.x[[6]]))
     }else{
       classe<-recurso %>% 
         purrr::map_chr(~stringr::str_trim(.x[[2]]))
     }
-   
+    
     
     if(database=="acordaos"){
       relator<-recurso %>% 
@@ -129,12 +129,12 @@ stf_metadata<-function(open_search,database="acordaos",parts_names=TRUE){
     }
     
     if(database=="acordaos"){
-    relator_acordao<- recurso %>% 
-      purrr::map_chr(~{
-        .x[[7]] %>% 
-          stringr::str_extract("(?<=Relator\\(a\\)\\sp\\/\\sAc\u00F3rd\u00E3o\\:).*(?=Julgamento)") %>% 
-          stringr::str_extract("(?<=Min\\.\\s).*")
-      })
+      relator_acordao<- recurso %>% 
+        purrr::map_chr(~{
+          .x[[7]] %>% 
+            stringr::str_extract("(?<=Relator\\(a\\)\\sp\\/\\sAc\u00F3rd\u00E3o\\:).*(?=Julgamento)") %>% 
+            stringr::str_extract("(?<=Min\\.\\s).*")
+        })
     }
     
     
@@ -153,13 +153,13 @@ stf_metadata<-function(open_search,database="acordaos",parts_names=TRUE){
         })
     }
     
-      
+    
     if(database=="acordaos"){
-    orgao_julgador<- recurso %>% 
-      purrr::map_chr(~{
-      .x[[7]] %>% 
-        stringr::str_extract("(?<=\u00D3rg\u00E3o\\sJulgador\\:).*")
-    })
+      orgao_julgador<- recurso %>% 
+        purrr::map_chr(~{
+          .x[[7]] %>% 
+            stringr::str_extract("(?<=\u00D3rg\u00E3o\\sJulgador\\:).*")
+        })
     }
     
     publicacao<-principal %>% 
@@ -170,8 +170,8 @@ stf_metadata<-function(open_search,database="acordaos",parts_names=TRUE){
       stringr::str_extract("(?<=PUBLIC\\s|DJ\\s)\\d{2}.\\d{2}.\\d{4}")
     
     if(database=="acordaos"){
-    eletronico<-publicacao %>% 
-      stringr::str_detect(stringr::regex("ELETR\u00D4NICO",ignore_case=TRUE))
+      eletronico<-publicacao %>% 
+        stringr::str_detect(stringr::regex("ELETR\u00D4NICO",ignore_case=TRUE))
     }
     
     partes<-principal %>% 
@@ -182,7 +182,7 @@ stf_metadata<-function(open_search,database="acordaos",parts_names=TRUE){
       purrr::modify_depth(1,~{
         .x %>% 
           setNames(stringr::str_extract(.,".*(?=\\:)"))
-        })
+      })
     
     partes<-dplyr::bind_rows(!!!partes)
     
@@ -191,29 +191,29 @@ stf_metadata<-function(open_search,database="acordaos",parts_names=TRUE){
     partes<-partes %>% 
       dplyr::select(-dplyr::matches(stringr::regex("rela|red.*",ignore_case=TRUE))) 
     
-    if(parts_names==TRUE){
-    names(partes)<-stf_parts_names(z=names(partes))
+    if(parts_names){
+      names(partes)<-stf_parts_names(z=names(partes))
     } 
     
     if(database=="acordaos"){
-    ementa<- principal %>% 
-      
-      xml2::xml_find_all("//div[contains(@style,'line-height: 150%;text-align: justify;')]") %>% 
-      xml2::xml_text()
-  }
+      ementa<- principal %>% 
+        
+        xml2::xml_find_all("//div[contains(@style,'line-height: 150%;text-align: justify;')]") %>% 
+        xml2::xml_text()
+    }
     
     if(database=="acordaos"){
-    decisao_tag<-principal %>% 
-      xml2::xml_find_all("//strong[div/@style='line-height: 150%;text-align: justify;']/following-sibling::p[1]") %>% 
-      xml2::xml_text()
-   
-    
-    decisao<-principal %>% 
-      xml2::xml_find_all("//strong[div/@style='line-height: 150%;text-align: justify;']/following-sibling::p[1]/../div[1]") %>% 
-      xml2::xml_text()
-    
-    
-    decisao<-ifelse(decisao_tag=="Decis\u00E3o",decisao,"inexistente")
+      decisao_tag<-principal %>% 
+        xml2::xml_find_all("//strong[div/@style='line-height: 150%;text-align: justify;']/following-sibling::p[1]") %>% 
+        xml2::xml_text()
+      
+      
+      decisao<-principal %>% 
+        xml2::xml_find_all("//strong[div/@style='line-height: 150%;text-align: justify;']/following-sibling::p[1]/../div[1]") %>% 
+        xml2::xml_text()
+      
+      
+      decisao<-ifelse(decisao_tag=="Decis\u00E3o",decisao,"inexistente")
     }
     
     if(database=="monocraticas"){
@@ -223,25 +223,25 @@ stf_metadata<-function(open_search,database="acordaos",parts_names=TRUE){
     }
     
     if(database=="acordaos"){
-    voto<-decisao %>% purrr::map_chr(~{
-      if
-      (stringr::str_detect(.x,stringr::regex("maioria",ignore_case=TRUE))){
-        "maioria"
-      }else if (stringr::str_detect(.x,stringr::regex("un(a|\u00E2)nim.*",ignore_case=TRUE))){
-        "un\u00E2nime"
-      }else if (stringr::str_detect(.x,stringr::regex("empate",ignore_case=TRUE))){
-        "empate"
-      }else
-        NA
-    })
+      voto<-decisao %>% purrr::map_chr(~{
+        if
+        (stringr::str_detect(.x,stringr::regex("maioria",ignore_case=TRUE))){
+          "maioria"
+        }else if (stringr::str_detect(.x,stringr::regex("un(a|\u00E2)nim.*",ignore_case=TRUE))){
+          "un\u00E2nime"
+        }else if (stringr::str_detect(.x,stringr::regex("empate",ignore_case=TRUE))){
+          "empate"
+        }else
+          NA
+      })
     }
     
     if(database=="acordaos"){
-    url_inteiro_teor<-principal %>% 
-      xml2::xml_find_all("//li/a[contains(@href,'obterInteiroTeor')]") %>% 
-      xml2::xml_attrs() %>%
-      stringr::str_extract("inteiroTeor.*") %>% 
-      stringr::str_c("http://www.stf.jus.br/portal/",.)
+      url_inteiro_teor<-principal %>% 
+        xml2::xml_find_all("//li/a[contains(@href,'obterInteiroTeor')]") %>% 
+        xml2::xml_attrs() %>%
+        stringr::str_extract("inteiroTeor.*") %>% 
+        stringr::str_c("http://www.stf.jus.br/portal/",.)
     }
     
     
@@ -252,11 +252,14 @@ stf_metadata<-function(open_search,database="acordaos",parts_names=TRUE){
       stringr::str_c("http://www.stf.jus.br/portal/processo/verProcessoAndamento.asp?",.)
     
     
-    if(database=="acordaos"){
-    data.frame(processo,origem,classe,relator,relator_acordao,data_julgamento,data_publicacao,orgao_julgador,eletronico,ementa,voto,decisao,url_inteiro_teor,url_andamento,partes,stringsAsFactors = FALSE)
+    if (database == "acordaos") {
+      data.frame(processo, origem, classe, relator, relator_acordao, 
+                 data_julgamento, data_publicacao, orgao_julgador,
+                 eletronico, ementa, voto,decisao, url_inteiro_teor,
+                 url_andamento, partes, stringsAsFactors = FALSE)
     }else{
       data.frame(processo,origem,classe,relator,data_julgamento,data_publicacao,decisao,url_andamento,partes,stringsAsFactors = FALSE)
-  }
+    }
   },data.frame(processo=NA_character_,origem=NA_character_,classe=NA_character_,relator=NA_character_,relator_acordao=NA_character_,data_julgamento=NA_character_,data_publicacao=NA_character_,orgao_julgador=NA_character_,eletronico=NA,ementa=NA_character_,voto=NA_character_,decisao=NA_character_,url_inteiro_teor=NA_character_,url_andamento=NA_character_,partes=NA_character_),
   quiet = FALSE
   ))

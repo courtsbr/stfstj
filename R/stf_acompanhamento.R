@@ -5,11 +5,11 @@
 #' @keywords stf, jurisprudência, andamento processual
 #' @return tabela com os andamentos processuais
 #' @export
-stf_acompanhamento<-function(url){
+stf_acompanhamento <- function(url) {
+  xp <- "//table[@class='resultadoAndamentoProcesso']"
   url %>%
     xml2::read_html() %>%
-    rvest::html_nodes(xpath="//table[@class='resultadoAndamentoProcesso']") %>%
-    rvest::html_table() %>% 
+    rvest::html_nodes(xpath = xp) %>%
+    rvest::html_table() %>%
     magrittr::extract2(1)
-  
 }
