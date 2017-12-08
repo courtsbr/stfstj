@@ -1,3 +1,6 @@
+## This function gets the urls according to the search parameters provided for
+## stf_metadata 
+
 stf_url<-function(x,y){
   
   y<-switch(y,
@@ -31,7 +34,7 @@ stf_urls<-purrr::possibly(stf_url,"ignore")
 
 
 stf_parts_names<-function(z){
-  parts_names %>% 
+  z %>% 
     purrr::map_chr(~{
       .x %>% 
         stringr::str_replace(stringr::regex("(adv|dpu).*\\s*",ignore_case = T),"Advogado") %>% 
