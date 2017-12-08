@@ -11,4 +11,6 @@
 NULL
 
 ## quiets concerns of R CMD check re: the .'s that appear in pipelines
-if(getRversion() >= "2.15.1")  utils::globalVariables(c(".",".x","y","z","field","phrase","parts_names","stf_urls"))
+if(getRversion() >= "2.15.1")  
+  utils::globalVariables(c(".", ".x", "y", "z", "field", "phrase", 
+                           "parts_names", "stf_urls"))

@@ -25,7 +25,7 @@ You can install stfstj from github with:
 
 ```{r gh-installation, eval = FALSE}
 # install.packages("devtools")
-devtools::install_github("jjesusfilho/stfstj")
+devtools::install_github("courtsbr/stfstj")
 ```
 
 You also have to make sure the packages [tesseract](https://github.com/ropensci/tesseract) and [pdftools](https://github.com/ropensci/pdftools) are installed as well as their dependencies.

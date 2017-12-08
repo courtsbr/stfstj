@@ -27,13 +27,13 @@ Usage for STF
 Suppose you want to download the metadata from lawsuits' precedentes (acordãos) with the expression "excesso de prazo". You can run this function:
 
 ``` r
-df<-stf_metadata(open_search="excesso de prazo",database="acordaos")
+df <- stf_metadata(open_search="excesso de prazo",database="acordaos")
 ```
 
 Or simply:
 
 ``` r
-df<-stf_metadata("excesso adj2 prazo")
+df <- stf_metadata("excesso adj2 prazo")
 ```
 
 Using "adj2" you are telling the search engine that "prazo" is one word apart from "excesso". You don't have to include "acordaos" in the argument `database` because this is the default.
@@ -41,7 +41,7 @@ Using "adj2" you are telling the search engine that "prazo" is one word apart fr
 I you want to search for monocratic decisions, you specify it in the `database` argument:
 
 ``` r
-df<-stf_metadata("excesso adj2 prazo",database="monocraticas")
+df <- stf_metadata("excesso adj2 prazo",database="monocraticas")
 ```
 
 In order to find all the options, use the help function:
