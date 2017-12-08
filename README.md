@@ -38,7 +38,7 @@ df <- stf_metadata("excesso adj2 prazo")
 
 Using "adj2" you are telling the search engine that "prazo" is one word apart from "excesso". You don't have to include "acordaos" in the argument `database` because this is the default.
 
-I you want to search for monocratic decisions, you specify it in the `database` argument:
+If you want to search for monocratic decisions, you specify it in the `database` argument:
 
 ``` r
 df <- stf_metadata("excesso adj2 prazo",database="monocraticas")
