@@ -24,7 +24,7 @@ Usage for STF
 
 ### Read metadata
 
-Suppose you want to download the metadata from lawsuits' precedentes (acordãos) with the expression "excesso de prazo". You can run this function:
+Suppose you want to download the metadata from lawsuits' precedents (acordãos) with the expression "excesso de prazo". You can run this function:
 
 ``` r
 df <- stf_metadata(open_search="excesso de prazo",database="acordaos")
