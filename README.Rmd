@@ -30,13 +30,13 @@ devtools::install_github("jjesusfilho/stfstj")
 
 You also have to make sure the packages [tesseract](https://github.com/ropensci/tesseract) and [pdftools](https://github.com/ropensci/pdftools) are installed as well as their dependencies.
 
-You also have to download the `tesseract` trained data for Portuguese. You can find directions for Linux, Mac-OS and Windows, [here](https://github.com/tesseract-ocr/tesseract/wiki)
+You also have to download the `tesseract` trained data for Portuguese. You can find directions for Linux, Mac-OS and Windows  [here](https://github.com/tesseract-ocr/tesseract/wiki)
 
 ## Usage for STF
 
 ### Read metadata
 
-Suppose you want to download the metadata from lawsuits' precedentes (acordãos) with the expression "excesso de prazo". You can run this function:
+Suppose you want to download the metadata from lawsuits' precedents (acordãos) with the expression "excesso de prazo". You can run this function:
 
 ```{r example1,eval=FALSE}
 df<-stf_metadata(open_search="excesso de prazo",database="acordaos")
@@ -48,9 +48,9 @@ Or simply:
 df<-stf_metadata("excesso adj2 prazo")
 ```
 
-Using "adj2" you are telling the search engine that "prazo" is one word apart from "excesso". You don't have to include "acordaos" in the argument `database` because this is the default.
+By using "adj2" you are telling the search engine that "prazo" is one word apart from "excesso". You don't have to include "acordaos" in the argument `database` because that's the default.
 
-I you want to search for monocratic decisions, you specify it in the `database` argument:
+If you want to search for monocratic decisions, you specify them in the `database` argument:
 
 ```{r example3,eval=FALSE}
 df<-stf_metadata("excesso adj2 prazo",database="monocraticas")
@@ -76,7 +76,7 @@ stf_help_view()
 
 ### Download whole decision (inteiro teor):
 
-Once you have imported the metadata, you can use the same data frame to import the whole decision. Beware that decisions before 2011 and even some of that year are in pdf image not text. Those decisions are converted to `png` and submmited to OCR in order to be read.
+Once you have imported the metadata, you can use the same data frame to import the whole decision. Beware that decisions published before 2011 and even some of that year are in pdf image not text. Those decisions are converted to `png` and submmited to OCR in order to be read.
 The limitation is that it might take a long time to read all decisions.
 
 ```{r example7,eval=FALSE}
