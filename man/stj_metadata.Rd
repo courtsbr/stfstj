@@ -4,14 +4,23 @@
 \alias{stj_metadata}
 \title{Function stj_metadata}
 \usage{
-stj_metadata(open_search, database = "acordaos")
+stj_metadata(open_search, database = "acordaos", phrase = FALSE,
+  start_date = "", end_date = "")
 }
 \arguments{
 \item{open_search}{Words to be searched}
 
-\item{database}{Character string with one of these seven options:"acordaos","sumulas","monocraticas","presidencia",
-"sumulas_vinculantes","repercussao_geral","questoes_ordem".
+\item{database}{Character string with one of these seven options:"acordaos","sumulas",
+"monocraticas',"informativo"
 Default is "acordaos".}
+
+\item{phrase}{Logical. If TRUE, it will deparse the sentence.}
+
+\item{start_date}{Optional. Character string  in the
+format: "dd/mm/yyyy" with the start of period to search for.}
+
+\item{end_date}{Optional. Character string  in the
+format: "dd/mm/yyyy" with the end of period to search for.}
 }
 \value{
 Dataframe with the metadata
