@@ -1,0 +1,10 @@
+library(stfstj)
+
+pesquisa_livre<-"TELEFONICA+ADJ+BRASIL"
+
+urls<-stf_urls(pesquisa_livre)
+
+base<-stf_metadados(urls)
+
+acordaos<-stf_acordaos(base[1,c(17,9)])
+
