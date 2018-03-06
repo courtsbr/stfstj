@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1520301938452.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3006083623",
+    "id" : "AB3CF3D0",
+    "lastKnownWriteTime" : 1520302001,
+    "last_content_update" : 1520302001349,
+    "path" : "~/pacotes/stfstj/README.Rmd",
+    "project_path" : "README.Rmd",
+    "properties" : {
+        "cursorPosition" : "111,0",
+        "scrollLine" : "105"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
