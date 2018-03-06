@@ -47,7 +47,7 @@ df<-stf__mono_metadata("excesso adj2 prazo")
 In order to find all the options, use the help function:
 
 ``` r
-?stf_metadata()
+?stf_opinion_metadata()
 ```
 
 Suppose now that you want to download all precedents where "Telefônica" is part in the lawsuit. You can add the suffix ".PART." to the search:
