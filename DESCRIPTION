@@ -10,14 +10,18 @@ Encoding: UTF-8
 LazyData: true
 Depends:
   R (>= 3.4.2)
-Imports:
-  httr,
-  stringr,
-  purrr,
-  dplyr,
-  magrittr,
-  xml2,
-  rvest,
-  pdftools,
-  tesseract
+Imports: 
+    httr,
+    stringr,
+    lubridate,
+    purrr,
+    dplyr,
+    magrittr,
+    xml2,
+    rvest,
+    pdftools,
+    tesseract,
+    assertthat,
+    abjutils,
+    tibble
 RoxygenNote: 6.0.1
