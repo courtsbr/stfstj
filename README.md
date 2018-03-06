@@ -1,4 +1,4 @@
-[![Travis-CI Build Status](https://travis-ci.org/jjesusfilho/stfstj.svg?branch=master)](https://travis-ci.org/jjesusfilho/stfstj)
+[![Travis-CI Build Status](https://travis-ci.org/jjesusfilho/stfstj.svg?branch=master)](https://travis-ci.org/jjesusfilho/stfstj) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/jjesusfilho/stfstj?branch=master&svg=true)](https://ci.appveyor.com/project/jjesusfilho/stfstj)
 
 stfstj
 ======
@@ -12,36 +12,36 @@ You can install stfstj from github with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("jjesusfilho/stfstj")
+devtools::install_github("courtsbr/stfstj")
 ```
 
 You also have to make sure the packages [tesseract](https://github.com/ropensci/tesseract) and [pdftools](https://github.com/ropensci/pdftools) are installed as well as their dependencies.
 
-You also have to download the `tesseract` trained data for Portuguese. You can find directions for Linux, Mac-OS and Windows, [here](https://github.com/tesseract-ocr/tesseract/wiki)
+You also have to download the `tesseract` trained data for Portuguese. You can find directions for Linux, Mac-OS and Windows [here](https://github.com/tesseract-ocr/tesseract/wiki)
 
 Usage for STF
 -------------
 
 ### Read metadata
 
-Suppose you want to download the metadata from lawsuits' precedentes (acordãos) with the expression "excesso de prazo". You can run this function:
+Suppose you want to download the metadata from the Brazilian Supreme Court panel opinions with the expression "excesso de prazo". You can run this function:
 
 ``` r
-df <- stf_metadata(open_search="excesso de prazo",database="acordaos")
+df<-stf_opinion_metadata(open_search="excesso de prazo")
 ```
 
 Or simply:
 
 ``` r
-df <- stf_metadata("excesso adj2 prazo")
+df<-stf_opinion_metadata("excesso adj2 prazo")
 ```
 
-Using "adj2" you are telling the search engine that "prazo" is one word apart from "excesso". You don't have to include "acordaos" in the argument `database` because this is the default.
+By using "adj2" you are telling the search engine that "prazo" is one word apart from "excesso".
 
-I you want to search for monocratic decisions, you specify it in the `database` argument:
+If you want to search for monocratic decisions, you can use another functio:
 
 ``` r
-df <- stf_metadata("excesso adj2 prazo",database="monocraticas")
+df<-stf__mono_metadata("excesso adj2 prazo")
 ```
 
 In order to find all the options, use the help function:
@@ -53,7 +53,7 @@ In order to find all the options, use the help function:
 Suppose now that you want to download all precedents where "Telefônica" is part in the lawsuit. You can add the suffix ".PART." to the search:
 
 ``` r
-telefonicaDF<-stf_metadata("telefonica.PART.")
+telefonicaDF<-stf_opinion_metadata("telefonica.PART.")
 ```
 
 If you want to see all the possible suffixes, the function `stf_help_view()` will load the help page on the Rstudio viewer pane:
@@ -62,11 +62,11 @@ If you want to see all the possible suffixes, the function `stf_help_view()` wil
 stf_help_view()
 ```
 
-### Download whole decision (inteiro teor):
+### Download whole opinion text (inteiro teor):
 
-Once you have imported the metadata, you can use the same data frame to import the whole decision. Beware that decisions before 2011 and even some of that year are in pdf image not text. Those decisions are converted to `png` and submmited to OCR in order to be read. The limitation is that it might take a long time to read all decisions.
+Once you have imported the metadata, you can use the same data frame to import the whole decision. Beware that decisions published before 2011 and even some of that year are in pdf image, not text. Those decisions are converted to `png` and submmited to OCR in order to be read. The limitation is that it might take a long time to read all opinions.
 
 ``` r
-decisionTelefonica<-stf_acordaos(telefonicaDF[1,]). 
+decisionTelefonica<-stf_opinion(telefonicaDF[1,]). 
 # Downloads just the first decision from the dataset imported above.
 ```

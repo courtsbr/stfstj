@@ -1,26 +1,24 @@
-## This function gets the urls according to the search parameters provided for
-## stf_metadata 
+# This function gets the urls according to the search parameters provided for
+# stf_opinion_metadata. So this function is going to be used inside the stf_panel_metadata function.
 
-stf_url<-function(x,y){
+
+stf_url<-function(x){
+## y will take the query parameter according to the options selected for the parameter database from stf_metadata function.
   
-  y<-switch(y,
-            acordaos="&base=baseAcordaos",
-            monocraticas="&base=baseMonocraticas",
-            sumulas="&base=baseSumulas",
-            informatico="&base=basePresidencia",
-            repercussao_geral="&base=baseRepercussao",
-            sumulas_vinculantes="&base=baseSumulasVinculantes",
-            questoes_ordem="&base=baseQuestoes"
-            
-            
-  )
-  
-  url1<-stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,y)
+
+## Creates the url, x is the open_search parameter, y is the database parameter
+  url1<-stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseAcordaos")
+
+## Encodes the URL replacing specially spaces by "%" plus the hexadecimal representation
   url1<-URLencode(url1)
+
+## Gets the number of precedents
   numero_tinyurl<-httr::GET(url1) %>% 
     httr::content() %>% 
     xml2::xml_find_all("//*[@class='linkPagina']|//*[@class='linkPagina']/@href") %>%
     xml2::xml_text()
+
+## 
   paginas<-stringr::str_extract(numero_tinyurl[[1]],"\\d+") %>% 
     as.numeric() %>% 
     magrittr::divide_by(10) %>% 
@@ -28,12 +26,17 @@ stf_url<-function(x,y){
   tinyURL<-numero_tinyurl[[2]]
   urls <- stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/",tinyURL,"&pagina=",1:paginas)
 }
+# End of the function
 
+# This functions encapsulates the previous function in the purrr::possibly function for the control
+# errors and the absense of results in the specified database. So this the actual function
+# that's going to be used.
 
 stf_urls<-purrr::possibly(stf_url,"ignore")
+# End of the function
 
-
-stf_parts_names<-function(z){
+# STF parties description is very messy. This functions does its best to correct all the parties descriptions.
+stf_parties_names<-function(z){
   z %>% 
     purrr::map_chr(~{
       .x %>% 
@@ -67,33 +70,45 @@ stf_parts_names<-function(z){
       
     })
 }
+# End of the function
 
+# This is the main function. It collects all the metadata from the Brazilian 
+# Supreme Court panel opinion. 
 
-#' Function stf_metadata
-#'
-#' This function returns metadada from Brazilian Supreme Court precedents
+#' Returns metadada from Brazilian Supreme Court precedents
+#' 
 #' @param open_search Words to be searched
-#' @param database Character string with one of these seven options:
-#'    "acordaos","sumulas","monocraticas","presidencia",
-#'    "sumulas_vinculantes","repercussao_geral","questoes_ordem".
-#'    Default is "acordaos".
-#' @param parts_names Logical. If TRUE (default), it will attempt to fix 
-#'    parts prefixes.
+#' @param parties_names Logical. If TRUE (default), it will attempt to fix 
+#'    the parties prefixes.
+#'    
 #' @keywords stf, precedents, metadata
+#' 
 #' @return Dataframe with the metadata
+#' 
 #' @export
-stf_metadata<-function(open_search,database="acordaos",parts_names=TRUE){
+stf_opinion_metadata<-function(open_search,parties_names=TRUE){
+ 
+## calls the stf_urls function to grab all urls. 
+  urls<-stf_urls(x=open_search)
+
+## If nothing was found, it returns a error message informing that no  precedent was found.   
+  assertthat::assert_that(urls[1]!="ignore",msg=paste("No precedent was found in the database"))
+
+## This whole chunck collects the content of every ten precedents loaded by the urls                         
   
-  urls<-stf_urls(x=open_search,y=database)
-  
-  assertthat::assert_that(urls[1]!="ignore",msg="No file was found in the chosen database")
-  
-  urls %>% purrr::map_dfr(purrr::possibly(~{
-    
+urls %>% purrr::map_dfr(purrr::possibly(~{
+
+## Grabs the parsed page.        
     principal<- .x %>% 
       httr::GET() %>% 
       httr::content() 
-    
+
+## Unfortunately, stf doesn't have a tag for every element of the metadata.
+## So in the same element div and class attribute "processosJurisprudenciaAcordaos"
+## we get the lawsuit number, the appealed court, the procedural class and the name
+## of the justice who reports the case, the occasional justice appointed to report that case,
+## and date of the trial, and the Panel.
+
     recurso<-principal %>% 
       xml2::xml_find_all("//div[@class='processosJurisprudenciaAcordaos']/p[1]/strong") %>% 
       xml2::xml_text() %>% 
@@ -106,77 +121,64 @@ stf_metadata<-function(open_search,database="acordaos",parts_names=TRUE){
       purrr::map_chr(~stringr::str_extract(.x[[1]],"(?<=\\/).*")) %>% 
       stringr::str_trim()
     
-    if(database=="acordaos"){
+   
       classe<-recurso %>% 
         purrr::map_chr(~stringr::str_trim(.x[[6]]))
-    }else{
-      classe<-recurso %>% 
-        purrr::map_chr(~stringr::str_trim(.x[[2]]))
-    }
     
     
-    if(database=="acordaos"){
+    
+    
       relator<-recurso %>% 
         purrr::map_chr(~{
           .x[[7]] %>% 
             stringr::str_extract("(?<=Relator\\(a\\)\\:).*?(?=Relator|Julgamento)") %>% 
             stringr::str_extract("(?<=Min\\.\\s).*")
         })
-    }else{
-      relator<-recurso %>% 
-        purrr::map_chr(~{
-          .x[[3]] %>% 
-            stringr::str_extract("(?<=Relator\\(a\\)\\:).*?(?=Relator|Julgamento)") %>% 
-            stringr::str_extract("(?<=Min\\.\\s).*")
-        })
-    }
-    
-    if(database=="acordaos"){
+
+      
+
       relator_acordao<- recurso %>% 
         purrr::map_chr(~{
           .x[[7]] %>% 
             stringr::str_extract("(?<=Relator\\(a\\)\\sp\\/\\sAc\u00F3rd\u00E3o\\:).*(?=Julgamento)") %>% 
             stringr::str_extract("(?<=Min\\.\\s).*")
         })
-    }
+
     
     
     
-    if(database=="acordaos"){
+
       data_julgamento<- recurso %>% 
         purrr::map_chr(~{
           .x[[7]] %>% 
             stringr::str_extract("\\d{2}\\/\\d{2}\\/\\d{4}")
         })
-    }else{
-      data_julgamento<- recurso %>% 
-        purrr::map_chr(~{
-          .x[[3]] %>% 
-            stringr::str_extract("\\d{2}\\/\\d{2}\\/\\d{4}")
-        })
-    }
     
     
-    if(database=="acordaos"){
+   
       orgao_julgador<- recurso %>% 
         purrr::map_chr(~{
           .x[[7]] %>% 
             stringr::str_extract("(?<=\u00D3rg\u00E3o\\sJulgador\\:).*")
         })
-    }
-    
+ 
+
+##  Date of the decision's publication   
     publicacao<-principal %>% 
       xml2::xml_find_all("//p[strong='Publica\u00E7\u00E3o']/following-sibling::*[1]") %>% 
       xml2::xml_text()
-    
+
     data_publicacao<- publicacao %>%
       stringr::str_extract("(?<=PUBLIC\\s|DJ\\s)\\d{2}.\\d{2}.\\d{4}")
-    
-    if(database=="acordaos"){
+
+## In case of the Panel decision's report (acordãos), this will return whether it's electronic or not.
+## This if information will be valueble to distinguish between reports that are text or images.
+
       eletronico<-publicacao %>% 
         stringr::str_detect(stringr::regex("ELETR\u00D4NICO",ignore_case=TRUE))
-    }
-    
+
+
+## This chunk will get all parties of the lawsuit and their respective descriptions.        
     partes<-principal %>% 
       xml2::xml_find_all("//p[strong[contains(.,'Parte')]]/following-sibling::pre[1]") %>% 
       xml2::xml_text() %>% 
@@ -191,21 +193,21 @@ stf_metadata<-function(open_search,database="acordaos",parts_names=TRUE){
     
     partes<-partes %>%
       purrr::map_dfr(~stringr::str_replace(.x,".*?(\\:\\s)","")) 
+    
     partes<-partes %>% 
       dplyr::select(-dplyr::matches(stringr::regex("rela|red.*",ignore_case=TRUE))) 
     
-    if(parts_names){
-      names(partes)<-stf_parts_names(z=names(partes))
+    if(parties_names){
+      names(partes)<-stf_parties_names(z=names(partes))
     } 
     
-    if(database=="acordaos"){
       ementa<- principal %>% 
         
         xml2::xml_find_all("//div[contains(@style,'line-height: 150%;text-align: justify;')]") %>% 
         xml2::xml_text()
-    }
-    
-    if(database=="acordaos"){
+
+
+## This chunk gets the decision.        
       decisao_tag<-principal %>% 
         xml2::xml_find_all("//strong[div/@style='line-height: 150%;text-align: justify;']/following-sibling::p[1]") %>% 
         xml2::xml_text()
@@ -217,15 +219,7 @@ stf_metadata<-function(open_search,database="acordaos",parts_names=TRUE){
       
       
       decisao<-ifelse(decisao_tag=="Decis\u00E3o",decisao,"inexistente")
-    }
-    
-    if(database=="monocraticas"){
-      decisao<-principal %>% 
-        xml2::xml_find_all("//p[strong='Decis\u00E3o']/following-sibling::pre") %>% 
-        xml2::xml_text()
-    }
-    
-    if(database=="acordaos"){
+   
       voto<-decisao %>% purrr::map_chr(~{
         if
         (stringr::str_detect(.x,stringr::regex("maioria",ignore_case=TRUE))){
@@ -237,32 +231,29 @@ stf_metadata<-function(open_search,database="acordaos",parts_names=TRUE){
         }else
           NA
       })
-    }
-    
-    if(database=="acordaos"){
+
+
+## The code below gets the url of the Panel decision's report.       
       url_inteiro_teor<-principal %>% 
         xml2::xml_find_all("//li/a[contains(@href,'obterInteiroTeor')]") %>% 
         xml2::xml_attrs() %>%
         stringr::str_extract("inteiroTeor.*") %>% 
         stringr::str_c("http://www.stf.jus.br/portal/",.)
-    }
+
     
-    
+## The code below gets the timeline of the lawsuit    
     url_andamento<-principal %>% 
       xml2::xml_find_all("//div[@class='abasAcompanhamento']/ul[@class='abas']/li/a[contains(@href,'verProcessoAndamento')]") %>%
       xml2::xml_attrs() %>%
       stringr::str_extract("numero.*") %>%
       stringr::str_c("http://www.stf.jus.br/portal/processo/verProcessoAndamento.asp?",.)
     
-    
-    if (database == "acordaos") {
+## The code below creates a data frame with all the metadata grabbed above.   
       data.frame(processo, origem, classe, relator, relator_acordao, 
                  data_julgamento, data_publicacao, orgao_julgador,
                  eletronico, ementa, voto,decisao, url_inteiro_teor,
                  url_andamento, partes, stringsAsFactors = FALSE)
-    }else{
-      data.frame(processo,origem,classe,relator,data_julgamento,data_publicacao,decisao,url_andamento,partes,stringsAsFactors = FALSE)
-    }
+    
   },data.frame(processo=NA_character_,origem=NA_character_,classe=NA_character_,relator=NA_character_,relator_acordao=NA_character_,data_julgamento=NA_character_,data_publicacao=NA_character_,orgao_julgador=NA_character_,eletronico=NA,ementa=NA_character_,voto=NA_character_,decisao=NA_character_,url_inteiro_teor=NA_character_,url_andamento=NA_character_,partes=NA_character_),
   quiet = FALSE
   ))

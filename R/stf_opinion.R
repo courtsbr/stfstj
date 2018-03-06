@@ -1,14 +1,16 @@
-#' Function stf_acordaos
-#'
-#' This function reads the pdfs with the whole decisions according to the metadata
-#'     obtained by the stf_metadata function.
+#' Reads the pdfs with the panel's opinion text  according to the metadata
+#'     obtained by the stf_opinion_metadata function.
+#'     
 #' @param df data frame with at least two columns, one with the url,
-#'    and the other, named electronic, with a logical vector informing whether the pdf is 
+#'    and the other, named electronico, with a logical vector informing whether the pdf is 
 #'    a text(TRUE) or an image(FALSE).
-#' @keywords stf, precedents, inteiro teor, decision
-#' @return vector with the whole content of the decisions.
+#'    
+#' @keywords stf, precedents, opinion, supreme court
+#' 
+#' @return vector with the whole content of the opinions.
+#' 
 #' @export
-stf_acordaos <- function(df) {
+stf_opinion <- function(df) {
   stopifnot(is.logical(df$eletronico))
   diretorio <- getwd()
   setwd(tempdir())
