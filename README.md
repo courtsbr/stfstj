@@ -24,15 +24,23 @@ Usage for STF
 
 ### Read metadata
 
+<<<<<<< HEAD
 Suppose you want to download the metadata from the Brazilian Supreme Court panel opinions with the expression "excesso de prazo". You can run this function:
 
 ``` r
 df<-stf_opinion_metadata(open_search="excesso de prazo")
+=======
+Suppose you want to download the metadata from cases' opinions with the expression "excesso de prazo" ("beyond reasonable time"). You can run this function:
+
+``` r
+df<-stf_metadata(open_search="excesso de prazo",database="acordaos")
+>>>>>>> a071f94bed4b3d364eba0338454c05d8f5331b2e
 ```
 
 Or simply:
 
 ``` r
+<<<<<<< HEAD
 df<-stf_opinion_metadata("excesso adj2 prazo")
 ```
 
@@ -42,6 +50,17 @@ If you want to search for monocratic decisions, you can use another functio:
 
 ``` r
 df<-stf__mono_metadata("excesso adj2 prazo")
+=======
+df<-stf_metadata("excesso adj2 prazo")
+```
+
+By using "adj2" you are telling the search engine that "prazo" is one word apart from "excesso". You don't have to include "acordaos" in the argument `database` because that's the default.
+
+If you want to search for monocratic decisions, you specify them in the `database` argument:
+
+``` r
+df<-stf_metadata("excesso adj2 prazo",database="monocraticas")
+>>>>>>> a071f94bed4b3d364eba0338454c05d8f5331b2e
 ```
 
 In order to find all the options, use the help function:
@@ -50,7 +69,7 @@ In order to find all the options, use the help function:
 ?stf_opinion_metadata()
 ```
 
-Suppose now that you want to download all precedents where "Telefônica" is part in the lawsuit. You can add the suffix ".PART." to the search:
+Suppose now that you want to read all cases where "Telefônica" is a party. You can add the suffix ".PART." to the search:
 
 ``` r
 telefonicaDF<-stf_opinion_metadata("telefonica.PART.")
@@ -62,9 +81,39 @@ If you want to see all the possible suffixes, the function `stf_help_view()` wil
 stf_help_view()
 ```
 
+<<<<<<< HEAD
 ### Download whole opinion text (inteiro teor):
 
 Once you have imported the metadata, you can use the same data frame to import the whole decision. Beware that decisions published before 2011 and even some of that year are in pdf image, not text. Those decisions are converted to `png` and submmited to OCR in order to be read. The limitation is that it might take a long time to read all opinions.
+=======
+### Vocabulary correspondence
+
+The table below shows a rough translation of the Brazilian Supreme Court's opinion's elements to US English:
+
+| Portuguese           | English               |
+|----------------------|-----------------------|
+| Acórdão              | Opinion               |
+| Relator              | Reporter              |
+| Ministro             | Justice               |
+| Ementa               | Syllabus              |
+| Decisão              | Decision              |
+| Processo             | Docket number         |
+| Parte                | Party                 |
+| Acompanhamento       | Docket sheet          |
+| Classe               | Petition type         |
+| Prover/conceder      | Reverse               |
+| Desprover/denegar    | Affirm                |
+| Anular decisão       | Remand                |
+| Origem               | Original jurisdiction |
+| Data da Distribuição | Argued date           |
+| Data do julgamento   | Decision's date       |
+
+### Read the full opinion text (inteiro teor):
+
+Once you have imported the metadata, you can use the same data frame to import the opinion. Beware that opinions published before 2011 and even some of that year are in pdf image, not in text. Those opinions are converted to `png` and subsequently submmited to OCR in order to be read.
+
+The limitation is that it takes a considerable amount of time to read the opinion. Without parallelization, one opinion can take up to 4 minutes to be read. As an example, 2000 opinions might take over five days to be read.
+>>>>>>> a071f94bed4b3d364eba0338454c05d8f5331b2e
 
 ``` r
 decisionTelefonica<-stf_opinion(telefonicaDF[1,]). 
