@@ -26,7 +26,7 @@ stj_opinion_metadata <- function(open_search,phrase=TRUE){
   
   
   content<-httr::GET("http://www.stj.jus.br",
-            path = path,
+            path = "/SCON/decisoes/toc.jsp",
             query = list(tipo_visualizacao = "",
                          livre = open_search,
                          b = "ACOR",
