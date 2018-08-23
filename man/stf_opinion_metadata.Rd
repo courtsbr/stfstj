@@ -4,10 +4,14 @@
 \alias{stf_opinion_metadata}
 \title{Returns metadada from Brazilian Supreme Court precedents}
 \usage{
-stf_opinion_metadata(open_search, parties_names = TRUE)
+stf_opinion_metadata(open_search, dt_start, dt_end, parties_names = TRUE)
 }
 \arguments{
 \item{open_search}{Words to be searched}
+
+\item{dt_start}{start date in the format "dd/mm/yyy"}
+
+\item{dt_end}{end date in the format "dd/mm/yyyy"}
 
 \item{parties_names}{Logical. If TRUE (default), it will attempt to fix 
 the parties prefixes.}
