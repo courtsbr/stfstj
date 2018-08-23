@@ -2,15 +2,16 @@
 # stf_opinion_metadata. So this function is going to be used inside the stf_panel_metadata function.
 
 
-stf_url<-function(x){
+stf_url<-function(x,y,w){
 ## y will take the query parameter according to the options selected for the parameter database from stf_metadata function.
   
 
-## Creates the url, x is the open_search parameter, y is the database parameter
-  url1<-stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?txtPesquisaLivre=",x,"&base=baseAcordaos")
-
+## Build url based on search, start and end parameters
+  url1<-"http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?base=baseAcordaos"
+ 
+  url1<-httr::modify_url(url1,query=list(txtPesquisaLivre=x,dataFinal=w,dataInicial=y))
+  
 ## Encodes the URL replacing specially spaces by "%" plus the hexadecimal representation
-  url1<-URLencode(url1)
 
 ## Gets the number of precedents
   numero_tinyurl<-httr::GET(url1) %>% 
@@ -80,16 +81,20 @@ stf_parties_names<-function(z){
 #' @param open_search Words to be searched
 #' @param parties_names Logical. If TRUE (default), it will attempt to fix 
 #'    the parties prefixes.
+#' @param dt_start start date in the format "dd/mm/yyy"
+#' @param dt_end end date in the format "dd/mm/yyyy"
 #'    
 #' @keywords stf, precedents, metadata
 #' 
 #' @return Dataframe with the metadata
 #' 
 #' @export
-stf_opinion_metadata<-function(open_search,parties_names=TRUE){
- 
+stf_opinion_metadata<-function(open_search,dt_start,dt_end,parties_names=TRUE){
+
+
+
 ## calls the stf_urls function to grab all urls. 
-  urls<-stf_urls(x=open_search)
+  urls<-stf_urls(x=open_search,y=dt_start,w=dt_end)
 
 ## If nothing was found, it returns a error message informing that no  precedent was found.   
   assertthat::assert_that(urls[1]!="ignore",msg=paste("No precedent was found in the database"))
@@ -159,7 +164,7 @@ urls %>% purrr::map_dfr(purrr::possibly(~{
       orgao_julgador<- recurso %>% 
         purrr::map_chr(~{
           .x[[7]] %>% 
-            stringr::str_extract("(?<=\u00D3rg\u00E3o\\sJulgador\\:).*")
+            stringr::str_extract("(?<=.rg.o Julgador\\:).*")
         })
  
 
@@ -249,7 +254,7 @@ urls %>% purrr::map_dfr(purrr::possibly(~{
       stringr::str_c("http://www.stf.jus.br/portal/processo/verProcessoAndamento.asp?",.)
     
 ## The code below creates a data frame with all the metadata grabbed above.   
-      data.frame(processo, origem, classe, relator, relator_acordao, 
+    data.frame(processo, origem, classe, relator, relator_acordao, 
                  data_julgamento, data_publicacao, orgao_julgador,
                  eletronico, ementa, voto,decisao, url_inteiro_teor,
                  url_andamento, partes, stringsAsFactors = FALSE)
